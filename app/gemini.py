@@ -7,6 +7,7 @@ def summarize_with_gemini(messages):
     if response.status_code == 200:
         model = genai.GenerativeModel('gemini-pro')
         response = model.generate_content(
-            f'請條列式重點整理以下訊息，使用繁體中文回答：{messages}')
+            f'請為以下聊天訊息做摘要，使用繁體中文回答：{messages}')
+        print(response.text)
         return response.text
     return f"Error: {response.status_code}"
