@@ -2,6 +2,7 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 from app.firebase import get_messages, clear_messages, add_message, get_summary_count, set_summary_count
+from app.gemini import summarize_with_gemini
 from app.config import Config
 
 line_bot_api = LineBotApi(Config.LINE_CHANNEL_ACCESS_TOKEN)
@@ -20,17 +21,17 @@ def handle_message(event):
                 event.reply_token,
                 TextSendMessage(text=f"總結數量已設定為 {count} 則訊息")
             )
-        except ValueError:
+        except (ValueError, IndexError):
             line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text="請輸入有效的數字")
+                TextSendMessage(text="請輸入有效的數字，例如：設定總結數量 5")
             )
         return
     
     if user_message == "立即總結":
         messages = get_messages(group_id)
         if messages:
-            summary = "\n".join(messages)
+            summary = summarize_with_gemini(messages)
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text=summary)
@@ -49,7 +50,7 @@ def handle_message(event):
     messages = get_messages(group_id)
     
     if len(messages) >= summary_count:
-        summary = "\n".join(messages)
+        summary = summarize_with_gemini(messages)
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=summary)
