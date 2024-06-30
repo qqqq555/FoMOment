@@ -34,7 +34,7 @@ def handle_message(event):
         if user_message == "立即摘要":
             line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text="正在處理，請稍候...")
+                TextSendMessage(text="正在整理訊息，請稍候...")
             )
             
             def process_summary():
@@ -63,7 +63,7 @@ def handle_message(event):
         if len(messages) >= summary_count:
             line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text="正在處理，請稍候...")
+                TextSendMessage(text="正在整理訊息，請稍候...")
             )
             
             def process_summary():
@@ -83,12 +83,6 @@ def handle_message(event):
             
             threading.Thread(target=process_summary).start()
             return
-
-        else:
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text="訊息已儲存")
-            )
 
 def handle_line_event(body, signature):
     try:
