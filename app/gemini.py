@@ -4,7 +4,6 @@ from app.config import Config
 
 def summarize_with_gemini(messages):
     genai.configure(api_key={Config.GEMINI_API_KEY})
-    response = requests.get()
     if response.status_code == 200:
         model = genai.GenerativeModel('gemini-pro-vision')
         response = model.generate_content(
