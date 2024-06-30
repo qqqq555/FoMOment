@@ -42,7 +42,7 @@ def handle_message(event):
                     summary = summarize_with_gemini(messages)
                     line_bot_api.push_message(
                         event.source.group_id,
-                        TextSendMessage(text=summary)
+                        TextSendMessage(text="訊息摘要\n\n" + summary)
                     )
                     clear_messages(group_id)
                 else:
@@ -69,7 +69,7 @@ def handle_message(event):
                 summary = summarize_with_gemini(messages)
                 line_bot_api.push_message(
                     event.source.group_id,
-                    TextSendMessage(text=summary)
+                    TextSendMessage(text="訊息摘要\n\n" + summary)
                 )
                 clear_messages(group_id)
             

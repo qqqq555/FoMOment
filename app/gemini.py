@@ -1,27 +1,13 @@
 import requests
-import json
+import google.generativeai as genai
 from app.config import Config
 
 def summarize_with_gemini(messages):
-    url = f"https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key={Config.GEMINI_API_KEY}"
-    headers = {'Content-Type': 'application/json'}
-    data = {
-    "contents": [
-        {
-            "parts": [{"text": '請重點整理以下訊息，使用繁體中文回答：' + messages}]
-        }
-    ]
-}
-    
-    response = requests.post(url, headers=headers, json=data)
+    genai.configure(api_key={Config.GEMINI_API_KEY})
+    response = requests.get()
     if response.status_code == 200:
-        try:
-            return response.json()["candidates"][0]["content"]["parts"][0]["text"]
-        except (KeyError, IndexError):
-            return "無法從 Gemini 獲取總結訊息"
-    else:
-        return f"Error: {response.status_code}"
-
-
-
-
+        model = genai.GenerativeModel('gemini-pro-vision')
+        response = model.generate_content(
+            f'請條列式重點整理以下訊息，使用繁體中文回答：{messages}')
+        return response.text
+    return f"Error: {response.status_code}"
