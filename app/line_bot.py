@@ -14,23 +14,24 @@ def handle_message(event):
     if event.source.type == 'group':
         group_id = event.source.group_id
         user_message = event.message.text
-
-        if user_message.startswith("設定總結數量"):
+        user_profile = line_bot_api.get_group_member_profile(group_id, event.source.user_id)
+        user_name = user_profile.display_name
+        if user_message.startswith("設定摘要訊息數"):
             try:
                 count = int(user_message.split(" ")[1])
                 set_summary_count(group_id, count)
                 line_bot_api.reply_message(
                     event.reply_token,
-                    TextSendMessage(text=f"總結數量已設定為 {count} 則訊息")
+                    TextSendMessage(text=f"好的！每經過 {count} 則訊息會整理摘要給您")
                 )
             except (ValueError, IndexError):
                 line_bot_api.reply_message(
                     event.reply_token,
-                    TextSendMessage(text="請輸入有效的數字，例如：設定總結數量 5")
+                    TextSendMessage(text="請輸入有效的數字，例如：設定摘要訊息數 5")
                 )
             return
     
-        if user_message == "立即總結":
+        if user_message == "立即摘要":
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text="正在處理，請稍候...")
@@ -48,25 +49,40 @@ def handle_message(event):
                 else:
                     line_bot_api.push_message(
                         event.source.group_id,
-                        TextSendMessage(text="沒有要總結的訊息")
+                        TextSendMessage(text="沒有新訊息")
                     )
             
             threading.Thread(target=process_summary).start()
             return
         
-        add_message(group_id, user_message)
+        add_message(group_id, user_message, user_name)
         
         summary_count = get_summary_count(group_id)
         messages = get_messages(group_id)
         
         if len(messages) >= summary_count:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text="正在處理，請稍候...")
+            )
             
-                summary = summarize_with_gemini(messages)
-                line_bot_api.push_message(
-                    event.source.group_id,
-                    TextSendMessage(text=f"訊息摘要\n\n{summary}")
-                )
-                clear_messages(group_id)
+            def process_summary():
+                messages = get_messages(group_id)
+                if messages:
+                    summary = summarize_with_gemini(messages)
+                    line_bot_api.push_message(
+                        event.source.group_id,
+                        TextSendMessage(text=f"訊息摘要\n\n{summary}")
+                    )
+                    clear_messages(group_id)
+                else:
+                    line_bot_api.push_message(
+                        event.source.group_id,
+                        TextSendMessage(text="沒有新訊息")
+                    )
+            
+            threading.Thread(target=process_summary).start()
+            return
 
         else:
             line_bot_api.reply_message(

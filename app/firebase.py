@@ -11,17 +11,18 @@ def get_messages(group_id):
     messages = messages_ref.get()
     if not messages:
         return []
-    return [msg['text'] for msg in messages.values()]
+    return [f"{msg['user']}: {msg['text']}" for msg in messages.values()]
 
 def clear_messages(group_id):
     messages_ref = db.reference(f'groups/{group_id}/messages')
     messages_ref.delete()
 
-def add_message(group_id, message_text):
+def add_message(group_id, message_text, user_name):
     messages_ref = db.reference(f'groups/{group_id}/messages')
     message_id = messages_ref.push().key
     message_data = {
-        "text": message_text
+        "text": message_text,
+        "user": user_name
     }
     messages_ref.child(message_id).set(message_data)
 
