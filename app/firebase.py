@@ -7,19 +7,27 @@ firebase_admin.initialize_app(options={
     'databaseURL': Config.FIREBASE_URL
 })
 
-def get_new_messages(group_id):
+d in messages.values()]
+
+def clear_messages(group_id):
+    messages_ref = db.reference(f'groups/{group_id}/messages')
+    messages_ref.delete()
+
+def add_message(group_id, message_text):
+    messages_ref = db.reference(f'groups/{group_id}/messages')
+    message_id = messages_ref.push().key
+    message_data = {
+        "text": message_text
+    }
+    messages_ref.child(message_id).set(message_data)
+
+def get_summary_count(group_id):
     group_ref = db.reference(f'groups/{group_id}')
-    last_entry_time = group_ref.child('last_entry_time').get()
-    messages_ref = group_ref.child('messages')
-    
-    if not last_entry_time:
-        return ["沒有新的訊息"]
+    summary_count = group_ref.child('summary_count').get()
+    if summary_count is None:
+        return 50
+    return summary_count
 
-    new_messages = messages_ref.order_by_child('timestamp').start_at(last_entry_time).get()
-    if not new_messages:
-        return ["沒有新的訊息"]
-
-    # 更新最後進入聊天室時間
-    group_ref.update({'last_entry_time': datetime.now().timestamp()})
-    
-    return [msg['text'] for msg in new_messages.values()]
+def set_summary_count(group_id, count):
+    group_ref = db.reference(f'groups/{group_id}')
+    group_ref.update({'summary_count': count})
