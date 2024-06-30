@@ -15,7 +15,10 @@ def summarize_with_gemini(messages):
     
     response = requests.post(url, headers=headers, json=data)
     if response.status_code == 200:
-        return data.candidates[0].content.parts[0].text
+        try:
+            return response.json()["candidates"][0]["content"]["parts"][0]["text"]
+        except (KeyError, IndexError):
+            return "無法從 Gemini 獲取總結訊息"
     else:
         return f"Error: {response.status_code}"
 
