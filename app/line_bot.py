@@ -11,6 +11,13 @@ handler = WebhookHandler(Config.LINE_CHANNEL_SECRET)
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    if event.source.type != 'group':
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="這個功能只適用於群組中。")
+        )
+        return
+
     group_id = event.source.group_id
     user_message = event.message.text
 
@@ -30,19 +37,27 @@ def handle_message(event):
         return
     
     if user_message == "立即總結":
-        messages = get_messages(group_id)
-        if messages:
-            summary = summarize_with_gemini(messages)
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text=summary)
-            )
-            clear_messages(group_id)
-        else:
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text="沒有要總結的訊息")
-            )
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="正在處理，請稍候...")
+        )
+        
+        def process_summary():
+            messages = get_messages(group_id)
+            if messages:
+                summary = summarize_with_gemini(messages)
+                line_bot_api.push_message(
+                    event.source.group_id,
+                    TextSendMessage(text=summary)
+                )
+                clear_messages(group_id)
+            else:
+                line_bot_api.push_message(
+                    event.source.group_id,
+                    TextSendMessage(text="沒有要總結的訊息")
+                )
+        
+        threading.Thread(target=process_summary).start()
         return
     
     add_message(group_id, user_message)
@@ -53,13 +68,13 @@ def handle_message(event):
     if len(messages) >= summary_count:
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text="正在產生訊息摘要，請稍候...")
+            TextSendMessage(text="正在處理，請稍候...")
         )
         
         def process_summary():
             summary = summarize_with_gemini(messages)
             line_bot_api.push_message(
-                event.source.user_id,
+                event.source.group_id,
                 TextSendMessage(text=summary)
             )
             clear_messages(group_id)

@@ -3,7 +3,7 @@ import json
 from app.config import Config
 
 def summarize_with_gemini(messages):
-    url = f"https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key={Config.GEMINI_API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={Config.GEMINI_API_KEY}"
     headers = {'Content-Type': 'application/json'}
     data = {
     "contents": [
