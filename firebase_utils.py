@@ -1,9 +1,9 @@
 import firebase_admin
 from firebase_admin import credentials, firestore
 from gemini_utils import generate_summary
-from config import FIREBASE_CREDENTIALS_PATH
+from config import FIREBASE_URL
 
-cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
+cred = credentials.Certificate(FIREBASE_URL)
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
