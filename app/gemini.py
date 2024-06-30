@@ -8,7 +8,7 @@ def summarize_with_gemini(messages):
     data = {
     "contents": [
         {
-            "parts": [{"請重點整理以下訊息，使用繁體中文回答："  + messages}]
+            "parts": [{"text": '請重點整理以下訊息，使用繁體中文回答：' + messages}]
         }
     ]
 }
