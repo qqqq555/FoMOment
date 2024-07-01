@@ -1,7 +1,6 @@
 import firebase_admin
-from firebase_admin import credentials, db
+from firebase_admin import db
 from app.config import Config
-from app.gemini import check_message
 
 firebase_admin.initialize_app(options={
     'databaseURL': Config.FIREBASE_URL
@@ -26,7 +25,6 @@ def add_message(group_id, message_text, user_name):
         "user": user_name
     }
     messages_ref.child(message_id).set(message_data)
-    check_message(group_id, message_id, message_text)
 
 def get_summary_count(group_id):
     group_ref = db.reference(f'groups/{group_id}')
@@ -42,7 +40,3 @@ def set_summary_count(group_id, count):
 def delete_group_data(group_id):
     group_ref = db.reference(f'groups/{group_id}')
     group_ref.delete()
-
-def delete_message(group_id, message_id):
-    messages_ref = db.reference(f'groups/{group_id}/messages')
-    messages_ref.child(message_id).delete()
