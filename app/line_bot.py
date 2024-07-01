@@ -1,13 +1,20 @@
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage
-from app.firebase import get_messages, clear_messages, add_message, get_summary_count, set_summary_count
+from linebot.models import MessageEvent, TextMessage, TextSendMessage, JoinEvent, LeaveEvent
+from app.firebase import get_messages, clear_messages, add_message, get_summary_count, set_summary_count, delete_group_data
 from app.gemini import summarize_with_gemini
 from app.config import Config
 import threading
 
 line_bot_api = LineBotApi(Config.LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(Config.LINE_CHANNEL_SECRET)
+
+@handler.add(JoinEvent)
+def handle_join(event):
+    if event.source.type == 'group':
+        group_id = event.source.group_id
+        welcome_message = TextSendMessage(text="大家好！我是FoMOment，我可以幫大家的訊息做摘要:D\n\n我預設每50則訊息會為您做一次摘要，但您可以在群組中使用下方列出的指令進行設定：\n\n· 輸入「設定摘要訊息數 [數字]」，更改每幾則訊息要做摘要的設定。例如輸入「設定摘要訊息數 5」，我將更改成每5則訊息為您做一次摘要。\n\n· 輸入「立即摘要」，我會立即為您摘要。\n\nP.S. 輸入文字即可，不需輸入「」喔！\n\nP.P.S 我還有其他功能，歡迎加我好友了解>.0")
+        line_bot_api.push_message(group_id, welcome_message)
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
