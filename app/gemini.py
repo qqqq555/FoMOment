@@ -6,7 +6,7 @@ def summarize_with_gemini(messages):
         genai.configure(api_key=Config.GEMINI_API_KEY)
         model = genai.GenerativeModel('gemini-pro')
         response = model.generate_content(
-            f'請為以下聊天訊息做條列式的簡易重點整理，看前後語意判斷，講重點就好，不要太多冗言贅字，重點列數盡量不要超過我給你的訊息量除以5，若訊息數小於5，給一條重點就好了，每一條不要超過15個字，使用繁體中文回答：{messages}')
+            f'請為以下聊天訊息做條列式的重點整理，看前後語意判斷，講重點就好，不要太多冗言贅字，回覆字數盡量不超過我給你的文字數量除以100，使用繁體中文回答：{messages}')
         return response.text
     except Exception as e:
         return f"Error: {str(e)}\n\n輸入敏感字詞有可能會出錯，請見諒QQ"
