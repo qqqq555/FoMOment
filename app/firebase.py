@@ -36,3 +36,7 @@ def get_summary_count(group_id):
 def set_summary_count(group_id, count):
     group_ref = db.reference(f'groups/{group_id}')
     group_ref.update({'summary_count': count})
+
+def delete_group_data(group_id):
+    group_ref = db.reference(f'groups/{group_id}')
+    group_ref.delete()

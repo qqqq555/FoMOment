@@ -16,6 +16,15 @@ def handle_join(event):
         welcome_message = TextSendMessage(text="大家好！我是FoMOment，我可以幫大家的訊息做摘要:D\n\n我預設每50則訊息會為您做一次摘要，但您可以在群組中使用下方列出的指令進行設定：\n\n· 輸入「設定摘要訊息數 [數字]」，更改每幾則訊息要做摘要的設定。例如輸入「設定摘要訊息數 5」，我將更改成每5則訊息為您做一次摘要。\n\n· 輸入「立即摘要」，我會立即為您摘要。\n\nP.S. 輸入文字即可，不需輸入「」喔！\n\nP.P.S 我還有其他功能，歡迎加我好友了解>.0")
         line_bot_api.push_message(group_id, welcome_message)
 
+@handler.add(LeaveEvent)
+def handle_leave(event):
+    if event.source.type == 'group':
+        group_id = event.source.group_id
+        try:
+            delete_group_data(group_id)
+        except Exception as e:
+            print(f"Error deleting data for group {group_id}: {str(e)}")
+
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     if event.source.type == 'group':
