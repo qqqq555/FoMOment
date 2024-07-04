@@ -45,7 +45,7 @@ def handle_message(event):
                 TextSendMessage(text=response)
             )
             return
-        if user_message.startswith("股票_"):
+        elif user_message.startswith("股票_"):
             stock_code = user_message.split("_")[1]
             df = get_stock_info([stock_code])
             if df is not None:
