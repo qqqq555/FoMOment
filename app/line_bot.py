@@ -40,7 +40,7 @@ def handle_message(event):
                 if filtered_exhibitions:
                     response = format_exhibition_info(filtered_exhibitions)
                 else:
-                    response = f"抱歉，目前沒有找到{city}的展覽資訊。"
+                    response = f"抱歉，目前沒有找到{city}的展覽資訊。請確保城市名稱正確，例如：臺北、臺中、高雄等。"
             else:
                 response = "抱歉，無法獲取展覽資訊。請稍後再試。"
             
