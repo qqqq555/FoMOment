@@ -70,11 +70,11 @@ def handle_message(event):
             else:
                 response = "無法獲取股票資訊，請稍後再試。"
 
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=response)
-        )
-        return
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=response)
+            )
+            return
     elif event.source.type == 'group':
         group_id = event.source.group_id
         user_message = event.message.text
