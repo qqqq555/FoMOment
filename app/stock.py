@@ -1,5 +1,5 @@
 import pandas as pd
-import requests
+import requests 
 import time
 import json
 
@@ -41,3 +41,16 @@ def get_stock_info(stock_codes):
     df['資料更新時間'] = df['資料更新時間'].apply(time2str)
     
     return df
+
+def format_stock_info(stock_info):
+    return (f"股票代號: {stock_info['股票代號']}\n"
+            f"公司簡稱: {stock_info['公司簡稱']}\n"
+            f"成交價: {stock_info['成交價']}\n"
+            f"成交量: {stock_info['成交量']}\n"
+            f"累積成交量: {stock_info['累積成交量']}\n"
+            f"開盤價: {stock_info['開盤價']}\n"
+            f"最高價: {stock_info['最高價']}\n"
+            f"最低價: {stock_info['最低價']}\n"
+            f"昨收價: {stock_info['昨收價']}\n"
+            f"漲跌百分比: {stock_info['漲跌百分比']:.2f}%\n"
+            f"資料更新時間: {stock_info['資料更新時間']}")
