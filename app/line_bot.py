@@ -29,7 +29,7 @@ def handle_leave(event):
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    if event.source.type == 'user':  # 只在單獨對話中處理
+    if event.source.type == 'user':
         user_message = event.message.text
 
         if user_message.startswith("展覽資訊_"):
