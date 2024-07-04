@@ -8,6 +8,7 @@ from app.exhibition import get_exhibition_data, filter_exhibitions, format_exhib
 import threading
 from app.stock import get_stock_info
 
+
 line_bot_api = LineBotApi(Config.LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(Config.LINE_CHANNEL_SECRET)
 
@@ -51,7 +52,8 @@ def handle_message(event):
             )
             return
         
-        '''if user_message.startswith("股票_"):
+
+            '''if user_message.startswith("股票_"):
             stock_code = user_message.split("_")[1]
             df = get_stock_info([stock_code])
             if df is not None:
@@ -75,7 +77,6 @@ def handle_message(event):
                 TextSendMessage(text=response)
             )
             return'''
-        
     elif event.source.type == 'group':
         group_id = event.source.group_id
         user_message = event.message.text
@@ -153,4 +154,4 @@ def handle_line_event(body, signature):
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
-        raise ValueError("Invalid signature. Check your channel access token/channel secret.")
+        raise ValueError("Invalid signature. Check your channel access token/channel secret.") 
