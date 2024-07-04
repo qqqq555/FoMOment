@@ -62,18 +62,24 @@ def handle_message(event):
             )
             return
         if user_message.startswith("股票_"):
-            stock_code = user_message.split("_")[1]
-            df = get_stock_info([stock_code])
-            if df is not None and not df.empty:
-                stock_info = df.iloc[0].to_dict()
-                response = format_stock_info(stock_info)
-            else:
-                response = "無法獲取股票資訊，請稍後再試。"
+            try:
+                stock_code = user_message.split("_")[1]
+                df = get_stock_info([stock_code])
+                if df is not None and not df.empty:
+                    stock_info = df.iloc[0].to_dict()
+                    response = format_stock_info(stock_info)
+                else:
+                    response = "無法獲取股票資訊，請稍後再試。"
 
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text=response)
-            )
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text=response)
+                )
+            except Exception as e:
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text="處理股票資訊時發生錯誤，請稍後再試。")
+                )
             return
     elif event.source.type == 'group':
         group_id = event.source.group_id
