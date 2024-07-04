@@ -32,9 +32,12 @@ def get_stock_info(stock_codes):
     df[['成交價', '昨收價', '漲跌百分比']] = df[['成交價', '昨收價', '漲跌百分比']].apply(count_per, axis=1)
 
     def time2str(t):
-        t = int(t) / 1000 + 8 * 60 * 60. 
-        return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(t))
-
+        try:
+            t = int(float(t)) / 1000 + 8 * 60 * 60
+            return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(t))
+        except (ValueError, TypeError):
+            return "Invalid timestamp"
+    
     df['資料更新時間'] = df['資料更新時間'].apply(time2str)
     
     return df
