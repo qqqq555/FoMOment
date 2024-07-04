@@ -5,6 +5,7 @@ from app.firebase import get_messages, clear_messages, add_message, get_summary_
 from app.gemini import summarize_with_gemini
 from app.config import Config
 from app.exhibition import get_exhibition_data, filter_exhibitions, format_exhibition_info
+from app.stock import get_stock_info
 import threading
 line_bot_api = LineBotApi(Config.LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(Config.LINE_CHANNEL_SECRET)
@@ -39,6 +40,30 @@ def handle_message(event):
             else:
                  response = "抱歉，無法獲取展覽資訊。請稍後再試。"
 
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=response)
+            )
+            return
+        if user_message.startswith("股票_"):
+            stock_code = user_message.split("_")[1]
+            df = get_stock_info([stock_code])
+            if df is not None:
+                stock_info = df.iloc[0].to_dict()
+                response = (f"股票代號: {stock_info['股票代號']}\n"
+                            f"公司簡稱: {stock_info['公司簡稱']}\n"
+                            f"成交價: {stock_info['成交價']}\n"
+                            f"成交量: {stock_info['成交量']}\n"
+                            f"累積成交量: {stock_info['累積成交量']}\n"
+                            f"開盤價: {stock_info['開盤價']}\n"
+                            f"最高價: {stock_info['最高價']}\n"
+                            f"最低價: {stock_info['最低價']}\n"
+                            f"昨收價: {stock_info['昨收價']}\n"
+                            f"漲跌百分比: {stock_info['漲跌百分比']:.2f}%\n"
+                            f"資料更新時間: {stock_info['資料更新時間']}")
+            else:
+                response = "無法獲取股票資訊，請稍後再試。"
+            
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text=response)
