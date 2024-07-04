@@ -45,30 +45,6 @@ def handle_message(event):
                 TextSendMessage(text=response)
             )
             return
-        elif user_message.startswith("股票_"):
-            stock_code = user_message.split("_")[1]
-            df = get_stock_info([stock_code])
-            if df is not None:
-                stock_info = df.iloc[0].to_dict()
-                response = (f"股票代號: {stock_info['股票代號']}\n"
-                            f"公司簡稱: {stock_info['公司簡稱']}\n"
-                            f"成交價: {stock_info['成交價']}\n"
-                            f"成交量: {stock_info['成交量']}\n"
-                            f"累積成交量: {stock_info['累積成交量']}\n"
-                            f"開盤價: {stock_info['開盤價']}\n"
-                            f"最高價: {stock_info['最高價']}\n"
-                            f"最低價: {stock_info['最低價']}\n"
-                            f"昨收價: {stock_info['昨收價']}\n"
-                            f"漲跌百分比: {stock_info['漲跌百分比']:.2f}%\n"
-                            f"資料更新時間: {stock_info['資料更新時間']}")
-            else:
-                response = "無法獲取股票資訊，請稍後再試。"
-            
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text=response)
-            )
-            return
     elif event.source.type == 'group':
         group_id = event.source.group_id
         user_message = event.message.text
