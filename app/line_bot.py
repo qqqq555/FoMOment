@@ -4,6 +4,7 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage, JoinEvent
 from app.firebase import get_messages, clear_messages, add_message, get_summary_count, set_summary_count, delete_group_data
 from app.gemini import summarize_with_gemini
 from app.config import Config
+from app.exhibition import get_exhibition_data, filter_exhibitions, format_exhibition_info
 import threading
 
 line_bot_api = LineBotApi(Config.LINE_CHANNEL_ACCESS_TOKEN)
@@ -28,7 +29,27 @@ def handle_leave(event):
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    if event.source.type == 'group':
+    if event.source.type == 'user':  # 只在單獨對話中處理
+        user_message = event.message.text
+
+        if user_message.startswith("展覽資訊_"):
+            city = user_message.split("_")[1]
+            exhibitions = get_exhibition_data()
+            if exhibitions:
+                filtered_exhibitions = filter_exhibitions(exhibitions, city)
+                if filtered_exhibitions:
+                    response = format_exhibition_info(filtered_exhibitions)
+                else:
+                    response = f"抱歉，目前沒有找到{city}的展覽資訊。"
+            else:
+                response = "抱歉，無法獲取展覽資訊。請稍後再試。"
+            
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=response)
+            )
+            return
+    elif event.source.type == 'group':
         group_id = event.source.group_id
         user_message = event.message.text
         user_profile = line_bot_api.get_group_member_profile(group_id, event.source.user_id)
