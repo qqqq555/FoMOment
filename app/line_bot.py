@@ -5,7 +5,6 @@ from app.firebase import get_messages, clear_messages, add_message, get_summary_
 from app.gemini import summarize_with_gemini
 from app.config import Config
 from app.exhibition import get_exhibition_data, filter_exhibitions, format_exhibition_info
-from app.stock import get_stock_info
 import threading
 line_bot_api = LineBotApi(Config.LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(Config.LINE_CHANNEL_SECRET)
@@ -39,7 +38,6 @@ def handle_message(event):
                      response = f"抱歉，目前沒有找到{city}的展覽資訊。請確保城市名稱正確，例如：臺北、臺中、高雄等。"
             else:
                  response = "抱歉，無法獲取展覽資訊。請稍後再試。"
-
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text=response)
@@ -114,7 +112,7 @@ def handle_message(event):
                         event.source.group_id,
                         TextSendMessage(text="沒有新訊息")
                     )
-            
+
             threading.Thread(target=process_summary).start()
             return
 def handle_line_event(body, signature):
