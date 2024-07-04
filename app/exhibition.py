@@ -1,5 +1,5 @@
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def get_exhibition_data():
     url = "https://cloud.culture.tw/frontsite/trans/SearchShowAction.do?method=doFindTypeJ&category=6"
@@ -10,13 +10,22 @@ def get_exhibition_data():
         return None
 
 def filter_exhibitions(exhibitions, city):
-    today = datetime.now().strftime("%Y/%m/%d")
+    today = datetime.now().date()
     filtered = []
     for ex in exhibitions:
         locations = [info['location'] for info in ex.get('showInfo', [])]
-        if any(city in loc for loc in locations) and ex.get('endDate', '') >= today:
+        start_date = datetime.strptime(ex.get('startDate', '1900/01/01'), "%Y/%m/%d").date()
+        end_date = datetime.strptime(ex.get('endDate', '9999/12/31'), "%Y/%m/%d").date()
+        if any(city in loc for loc in locations) and end_date >= today:
+            if start_date > today:
+                ex['days_to_start'] = (start_date - today).days
+                ex['days_left'] = None
+            else:
+                ex['days_left'] = (end_date - today).days
+                ex['days_to_start'] = None
             filtered.append(ex)
-    return sorted(filtered, key=lambda x: x.get('startDate', ''))[:5]
+    
+    return sorted(filtered, key=lambda x: (x['days_left'] is None, x['days_left'], x['days_to_start']))[:5]
 
 def format_exhibition_info(exhibitions):
     formatted_info = "展覽資訊：\n\n"
@@ -28,6 +37,10 @@ def format_exhibition_info(exhibitions):
             formatted_info += f"結束時間：{exhibition['showInfo'][0]['endTime']}\n"
         formatted_info += f"開始日期：{exhibition['startDate']}\n"
         formatted_info += f"結束日期：{exhibition['endDate']}\n"
+        if exhibition['days_left'] is not None:
+            formatted_info += f"剩餘天數：{exhibition['days_left']}天\n"
+        else:
+            formatted_info += f"距離開始：{exhibition['days_to_start']}天\n"
         formatted_info += f"主辦單位：{', '.join(exhibition['masterUnit'])}\n"
         formatted_info += f"簡介：{exhibition['descriptionFilterHtml'][:100]}...\n\n"
     return formatted_info
