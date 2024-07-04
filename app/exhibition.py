@@ -2,7 +2,7 @@ import requests
 from datetime import datetime
 
 def get_exhibition_data():
-    url = "https://cloud.culture.tw/frontsite/trans/SearchShowAction.do?method=doFindTypeJOpenApi&category=6"
+    url = "https://cloud.culture.tw/frontsite/trans/SearchShowAction.do?method=doFindTypeJ&category=6"
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
