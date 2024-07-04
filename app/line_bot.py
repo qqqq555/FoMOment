@@ -51,7 +51,7 @@ def handle_message(event):
             )
             return
         
-        if user_message.startswith("股票_"):
+        '''if user_message.startswith("股票_"):
             stock_code = user_message.split("_")[1]
             df = get_stock_info([stock_code])
             if df is not None:
@@ -74,7 +74,7 @@ def handle_message(event):
                 event.reply_token,
                 TextSendMessage(text=response)
             )
-            return
+            return'''
         
     elif event.source.type == 'group':
         group_id = event.source.group_id
