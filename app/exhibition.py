@@ -1,5 +1,9 @@
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime
+from linebot import LineBotApi
+from linebot.models import FlexSendMessage, BubbleContainer, BoxComponent, TextComponent, ButtonComponent, URIAction
+
+line_bot_api = LineBotApi('YOUR_CHANNEL_ACCESS_TOKEN')
 
 def get_exhibition_data():
     url = "https://cloud.culture.tw/frontsite/trans/SearchShowAction.do?method=doFindTypeJ&category=6"
@@ -27,20 +31,73 @@ def filter_exhibitions(exhibitions, city):
     
     return sorted(filtered, key=lambda x: (x['days_left'] is None, x['days_left'], x['days_to_start']))[:5]
 
-def format_exhibition_info(exhibitions):
-    formatted_info = "展覽資訊：\n\n"
+def create_flex_message(exhibitions):
+    bubbles = []
     for exhibition in exhibitions:
-        formatted_info += f"展覽名稱：{exhibition['title']}\n"
-        if exhibition['showInfo']:
-            formatted_info += f"地點：{exhibition['showInfo'][0]['location']}\n"
-            formatted_info += f"開始時間：{exhibition['showInfo'][0]['time']}\n"
-            formatted_info += f"結束時間：{exhibition['showInfo'][0]['endTime']}\n"
-        formatted_info += f"開始日期：{exhibition['startDate']}\n"
-        formatted_info += f"結束日期：{exhibition['endDate']}\n"
-        if exhibition['days_left'] is not None:
-            formatted_info += f"剩餘天數：{exhibition['days_left']}天\n"
-        else:
-            formatted_info += f"距離開始：{exhibition['days_to_start']}天\n"
-        formatted_info += f"主辦單位：{', '.join(exhibition['masterUnit'])}\n"
-        formatted_info += f"簡介：{exhibition['descriptionFilterHtml'][:100]}...\n\n"
-    return formatted_info
+        title = exhibition['title']
+        description = exhibition['descriptionFilterHtml'][:100] + '...'
+        location = exhibition['showInfo'][0]['location'] if exhibition['showInfo'] else '未知'
+        start_date = exhibition['startDate']
+        end_date = exhibition['endDate']
+
+        bubble = BubbleContainer(
+            body=BoxComponent(
+                layout='vertical',
+                contents=[
+                    TextComponent(text=title, weight='bold', size='lg'),
+                    BoxComponent(
+                        layout='baseline',
+                        contents=[
+                            TextComponent(text='地點:', size='sm', color='#AAAAAA'),
+                            TextComponent(text=location, size='sm', color='#666666')
+                        ],
+                    ),
+                    BoxComponent(
+                        layout='baseline',
+                        contents=[
+                            TextComponent(text='開始日期:', size='sm', color='#AAAAAA'),
+                            TextComponent(text=start_date, size='sm', color='#666666')
+                        ],
+                    ),
+                    BoxComponent(
+                        layout='baseline',
+                        contents=[
+                            TextComponent(text='結束日期:', size='sm', color='#AAAAAA'),
+                            TextComponent(text=end_date, size='sm', color='#666666')
+                        ],
+                    ),
+                    ButtonComponent(
+                        action=URIAction(label='查看更多', uri='http://example.com'),
+                        style='link'
+                    )
+                ],
+            )
+        )
+        bubbles.append(bubble)
+
+    flex_message = FlexSendMessage(
+        alt_text='展覽資訊',
+        contents=BoxComponent(
+            type='carousel',
+            contents=bubbles
+        )
+    )
+
+    return flex_message
+
+def send_flex_message(user_id, exhibitions):
+    flex_message = create_flex_message(exhibitions)
+    line_bot_api.push_message(user_id, flex_message)
+
+def main():
+    city = "台北市"  
+    exhibitions = get_exhibition_data()
+    if exhibitions:
+        filtered_exhibitions = filter_exhibitions(exhibitions, city)
+        user_id = 'USER_ID'  
+        send_flex_message(user_id, filtered_exhibitions)
+    else:
+        print("获取展览数据失败")
+
+if __name__ == '__main__':
+    main()
