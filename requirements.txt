@@ -3,3 +3,5 @@ line-bot-sdk
 firebase-admin
 google-generativeai
 gunicorn
+pandas 
+json
