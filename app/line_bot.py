@@ -5,6 +5,7 @@ from app.firebase import get_messages, clear_messages, add_message, get_summary_
 from app.gemini import summarize_with_gemini
 from app.config import Config
 from app.exhibition import get_exhibition_data, filter_exhibitions, format_exhibition_info
+from app.stock import get_stock_info
 import threading
 line_bot_api = LineBotApi(Config.LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(Config.LINE_CHANNEL_SECRET)
@@ -42,6 +43,14 @@ def handle_message(event):
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text=response)
+            )
+            return
+        if user_message.startswith("股票_"):
+            stock_code = user_message.split("_")[1]
+            stock_info = get_stock_info(stock_code)
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=stock_info)
             )
             return
     elif event.source.type == 'group':
