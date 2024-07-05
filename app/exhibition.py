@@ -1,9 +1,6 @@
 import requests
-from datetime import datetime
-from linebot import LineBotApi
-from linebot.models import FlexSendMessage, BubbleContainer, BoxComponent, TextComponent, ButtonComponent, URIAction
-
-line_bot_api = LineBotApi('YOUR_CHANNEL_ACCESS_TOKEN')
+from datetime import datetime, timedelta
+from linebot.models import CarouselTemplate, CarouselColumn, MessageAction, URIAction, TemplateSendMessage
 
 def get_exhibition_data():
     url = "https://cloud.culture.tw/frontsite/trans/SearchShowAction.do?method=doFindTypeJ&category=6"
@@ -31,73 +28,37 @@ def filter_exhibitions(exhibitions, city):
     
     return sorted(filtered, key=lambda x: (x['days_left'] is None, x['days_left'], x['days_to_start']))[:5]
 
-def create_flex_message(exhibitions):
-    bubbles = []
+def create_carousel_template(exhibitions):
+    columns = []
     for exhibition in exhibitions:
-        title = exhibition['title']
-        description = exhibition['descriptionFilterHtml'][:100] + '...'
-        location = exhibition['showInfo'][0]['location'] if exhibition['showInfo'] else '未知'
-        start_date = exhibition['startDate']
-        end_date = exhibition['endDate']
-
-        bubble = BubbleContainer(
-            body=BoxComponent(
-                layout='vertical',
-                contents=[
-                    TextComponent(text=title, weight='bold', size='lg'),
-                    BoxComponent(
-                        layout='baseline',
-                        contents=[
-                            TextComponent(text='地點:', size='sm', color='#AAAAAA'),
-                            TextComponent(text=location, size='sm', color='#666666')
-                        ],
-                    ),
-                    BoxComponent(
-                        layout='baseline',
-                        contents=[
-                            TextComponent(text='開始日期:', size='sm', color='#AAAAAA'),
-                            TextComponent(text=start_date, size='sm', color='#666666')
-                        ],
-                    ),
-                    BoxComponent(
-                        layout='baseline',
-                        contents=[
-                            TextComponent(text='結束日期:', size='sm', color='#AAAAAA'),
-                            TextComponent(text=end_date, size='sm', color='#666666')
-                        ],
-                    ),
-                    ButtonComponent(
-                        action=URIAction(label='查看更多', uri='http://example.com'),
-                        style='link'
-                    )
-                ],
+        location = exhibition['showInfo'][0]['location'] if exhibition['showInfo'] else '未知地點'
+        title = exhibition['title'] if exhibition['title'] else '未知展覽名稱'
+        thumbnail_image_url = exhibition.get('image', 'https://storage.googleapis.com/你的圖片連結.png')
+        columns.append(
+            CarouselColumn(
+                text=location,
+                title=title,
+                thumbnail_image_url=thumbnail_image_url,
+                actions=[
+                    MessageAction(label='按鈕 1', text=f"展覽名稱：{title}\n地點：{location}"),
+                    URIAction(label='更多資訊', uri=exhibition['webSales'] if 'webSales' in exhibition else 'https://www.google.com')
+                ]
             )
         )
-        bubbles.append(bubble)
+    carousel_template = CarouselTemplate(columns=columns)
+    return TemplateSendMessage(alt_text='輪播樣板', template=carousel_template)
 
-    flex_message = FlexSendMessage(
-        alt_text='展覽資訊',
-        contents=BoxComponent(
-            type='carousel',
-            contents=bubbles
-        )
-    )
-
-    return flex_message
-
-def send_flex_message(user_id, exhibitions):
-    flex_message = create_flex_message(exhibitions)
-    line_bot_api.push_message(user_id, flex_message)
-
-def main():
-    city = "台北市"  
+def main(city):
     exhibitions = get_exhibition_data()
     if exhibitions:
         filtered_exhibitions = filter_exhibitions(exhibitions, city)
-        user_id = 'USER_ID'  
-        send_flex_message(user_id, filtered_exhibitions)
+        if filtered_exhibitions:
+            return create_carousel_template(filtered_exhibitions)
+        else:
+            return "目前沒有符合條件的展覽。"
     else:
-        print("获取展览数据失败")
+        return "無法獲取展覽數據。~~"
 
-if __name__ == '__main__':
-    main()
+// In your main function or webhook handler, you would call:
+city = '台北市'  # Replace with the city you want to filter by
+carousel_message = main(city)
