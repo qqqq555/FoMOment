@@ -28,8 +28,9 @@ def filter_exhibitions(exhibitions, city):
     return sorted(filtered, key=lambda x: (x['days_left'] is None, x['days_left'], x['days_to_start']))[:5]
 
 def format_exhibition_info(exhibitions):
-    formatted_info = "展覽資訊：\n\n"
+    formatted_info_list = []
     for exhibition in exhibitions:
+        formatted_info = "展覽資訊：\n\n"
         formatted_info += f"展覽名稱：{exhibition['title']}\n"
         if exhibition['showInfo']:
             formatted_info += f"地點：{exhibition['showInfo'][0]['locationName']}\n"
@@ -42,4 +43,7 @@ def format_exhibition_info(exhibitions):
             formatted_info += f"距離開始：{exhibition['days_to_start']}天\n"
         formatted_info += f"主辦單位：{', '.join(exhibition['masterUnit'])}\n"
         formatted_info += f"簡介：{exhibition['descriptionFilterHtml'][:100]}...\n\n"
-    return formatted_info
+        
+        formatted_info_list.append(formatted_info)
+    
+    return formatted_info_list
