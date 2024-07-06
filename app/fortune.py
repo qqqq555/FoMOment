@@ -3,6 +3,27 @@ from linebot.models import FlexSendMessage, BubbleContainer, BoxComponent, TextC
 
 FORTUNES = ["大吉", "吉", "中吉", "小吉", "末吉", "凶"]
 
+FORTUNES_IMAGES = {
+    "大吉": [
+        "https://storage.cloud.google.com/sitconimg/img/%E5%A4%A7%E5%90%89.png"
+    ],
+    "吉": [
+        "https://storage.cloud.google.com/sitconimg/img/%E5%90%89.png"
+    ],
+    "中吉": [
+        "https://storage.cloud.google.com/sitconimg/img/%E4%B8%AD%E5%90%89.png"
+    ],
+    "小吉": [
+        "https://storage.cloud.google.com/sitconimg/img/%E5%B0%8F%E5%90%89.png"
+    ],
+    "末吉": [
+        "https://storage.cloud.google.com/sitconimg/img/%E6%9C%AB%E5%90%89.png"
+    ],
+    "凶": [
+        "https://storage.cloud.google.com/sitconimg/img/%E5%87%B6.png"
+    ]
+}
+
 FORTUNE_MESSAGES = {
     "大吉": [
         "今天會是美好的一天！充滿希望和機遇。",
@@ -47,7 +68,7 @@ def create_fortune_flex_message(fortune, message):
             layout="vertical",
             contents=[
                 ImageComponent(
-                    url=f"https://raw.githubusercontent.com/qqqq555/FoMOment/main/{fortune}.png",
+                    url=FORTUNES_IMAGES[fortune],
                     size="full",
                     aspect_mode="cover",
                     aspect_ratio="1:1"
