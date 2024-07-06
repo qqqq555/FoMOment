@@ -1,6 +1,6 @@
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage, JoinEvent, LeaveEvent,TemplateSendMessage,ButtonsTemplate,MessageAction,PostbackAction,ImageCarouselTemplate,ImageCarouselColumn,ImageSendMessage
+from linebot.models import MessageEvent, TextMessage, TextSendMessage, JoinEvent, LeaveEvent,TemplateSendMessage, MessageAction, CarouselColumn, CarouselTemplate, URIAction
 from app.firebase import get_messages, clear_messages, add_message, get_summary_count, set_summary_count, delete_group_data, check_fortune_usage
 from app.gemini import summarize_with_gemini
 from app.config import Config
@@ -72,6 +72,27 @@ def handle_message(event):
                 event.reply_token,
                 TextSendMessage(text=stock_info)
             )
+            return
+        elif  user_message == '!輪播樣板':
+            carousel_template = CarouselTemplate(columns=[
+                CarouselColumn(
+                    text='選項 1',
+                    title='標題 1',
+                    thumbnail_image_url='../img/大吉.png',
+                    actions=[
+                        MessageAction(label='按鈕 1', text='按鈕 1')
+                    ]
+                ),
+                CarouselColumn(
+                    text='連結',
+                    title='連結',
+                    thumbnail_image_url='../img/大吉.png',
+                    actions=[
+                        URIAction(label='前往GOOGLE', uri='https://www.google.com')
+                    ]
+                )
+            ])
+            TemplateSendMessage(alt_text="輪播樣板", template=carousel_template)
             return
     elif event.source.type == 'group':
         group_id = event.source.group_id
