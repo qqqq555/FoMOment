@@ -83,11 +83,18 @@ def handle_message(event):
                 )
         elif user_message.startswith("股票_"):
             stock_code = user_message.split("_")[1]
-            stock_info = get_stock_info(stock_code)
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text=stock_info)
-            )
+            try:
+                stock_info = get_stock_info(stock_code)
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text=stock_info)
+                )
+            except Exception as e:
+                logging.error(f"Error handling stock info request: {str(e)}")
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text="抱歉，處理股票資訊時發生錯誤。")
+                )
             return
         elif user_message == '拜託':
             carousel_template = CarouselTemplate(columns=[
