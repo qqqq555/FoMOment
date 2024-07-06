@@ -53,11 +53,10 @@ def handle_message(event):
                     response = f"抱歉，目前沒有找到{city}的展覽資訊。請確保城市名稱正確，例如：臺北、臺中、高雄等。"
             else:
                 response = "抱歉，無法獲取展覽資訊。請稍後再試。"
-
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text=response)
-            )
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text=response)
+                )
             return
         elif user_message.startswith("股票_"):
             stock_code = user_message.split("_")[1]
@@ -65,6 +64,12 @@ def handle_message(event):
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text=stock_info)
+            )
+            return
+        else:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text="抱歉，我不太懂您的意思。")
             )
             return
     elif event.source.type == 'group':
