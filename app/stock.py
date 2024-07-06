@@ -93,31 +93,30 @@ import datetime
 
 def get_stock_info(stock_code):
     try:
-        stock = twstock.Stock(stock_code)
-        real_time_data = stock.fetch_realtime()
+        stock = twstock.realtime.get(stock_code)
         
-        if real_time_data['success']:
+        if stock['success']:
             info = f"股票代號: {stock_code}\n"
-            info += f"公司簡稱: {stock.info['name']}\n"
-            info += f"成交價: {real_time_data['realtime']['latest_trade_price']}\n"
+            info += f"公司簡稱: {stock['info']['name']}\n"
+            info += f"成交價: {stock['realtime']['latest_trade_price']}\n"
             
             # Calculate price change percentage
-            yesterday_price = float(real_time_data['realtime']['open'])
-            current_price = float(real_time_data['realtime']['latest_trade_price'])
-            if yesterday_price != 0:
-                change_percent = (current_price - yesterday_price) / yesterday_price * 100
+            open_price = float(stock['realtime']['open'])
+            current_price = float(stock['realtime']['latest_trade_price'])
+            if open_price != 0:
+                change_percent = (current_price - open_price) / open_price * 100
                 info += f"漲跌百分比: {change_percent:.2f}%\n"
             else:
                 info += "漲跌百分比: N/A\n"
             
-            info += f"成交量: {real_time_data['realtime']['accumulate_trade_volume']}\n"
-            info += f"開盤價: {real_time_data['realtime']['open']}\n"
-            info += f"最高價: {real_time_data['realtime']['high']}\n"
-            info += f"最低價: {real_time_data['realtime']['low']}\n"
-            info += f"昨收價: {real_time_data['realtime']['yesterday_close']}\n"
+            info += f"成交量: {stock['realtime']['accumulate_trade_volume']}\n"
+            info += f"開盤價: {stock['realtime']['open']}\n"
+            info += f"最高價: {stock['realtime']['high']}\n"
+            info += f"最低價: {stock['realtime']['low']}\n"
+            info += f"昨收價: {stock['realtime']['yesterday_close']}\n"
             
             # Convert timestamp to datetime
-            timestamp = int(real_time_data['timestamp']) / 1000  # Convert milliseconds to seconds
+            timestamp = int(stock['timestamp'])  # Timestamp is already in seconds
             update_time = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
             info += f"更新時間: {update_time}"
             

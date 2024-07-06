@@ -90,7 +90,6 @@ def handle_message(event):
                     TextSendMessage(text=stock_info)
                 )
             except Exception as e:
-                logging.error(f"Error handling stock info request: {str(e)}")
                 line_bot_api.reply_message(
                     event.reply_token,
                     TextSendMessage(text="抱歉，處理股票資訊時發生錯誤。")
