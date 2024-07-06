@@ -86,7 +86,7 @@ def handle_message(event):
                 CarouselColumn(
                     text='選項 1',
                     title='標題 1',
-                    thumbnail_image_url='https://storage.cloud.google.com/sitconimg/img/%E4%B8%AD%E5%90%89.png',
+                    thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png',
                     actions=[
                         MessageAction(label='按鈕 1', text='按鈕 1')
                     ]
@@ -94,7 +94,7 @@ def handle_message(event):
                 CarouselColumn(
                     text='連結',
                     title='連結',
-                    thumbnail_image_url='https://storage.cloud.google.com/sitconimg/img/%E4%B8%AD%E5%90%89.png',
+                    thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png',
                     actions=[
                         URIAction(label='前往GOOGLE', uri='https://www.google.com')
                     ]
