@@ -8,4 +8,4 @@ def get_news_carousel():
         news_items = google_news.get_top_news()
         return news_items[:10]
     except Exception as e:
-        return f"獲取新聞時發生錯誤: {str(e)}"
+        return []
