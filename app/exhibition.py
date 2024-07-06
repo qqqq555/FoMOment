@@ -31,6 +31,14 @@ def format_exhibition_info(exhibitions):
     columns = []
     for exhibition in exhibitions:
         title = exhibition['title']
+        show_info = exhibition['showInfo'][0]
+        show_unit = exhibition['showUnit']
+        description = exhibition['descriptionFilterHtml']
+        master_unit = exhibition['masterUnit']
+        web_sales = exhibition['webSales']
+        start_date = exhibition['startDate']
+        end_date = exhibition['endDate']
+
         column = CarouselColumn(
             text=f"展覽名稱：{title}",
             title=title,
@@ -44,4 +52,3 @@ def format_exhibition_info(exhibitions):
     
     carousel_template = CarouselTemplate(columns=columns)
     return carousel_template
-
