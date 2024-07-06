@@ -1,6 +1,7 @@
 import firebase_admin
 from firebase_admin import db
 from app.config import Config
+from datetime import datetime
 
 firebase_admin.initialize_app(options={
     'databaseURL': Config.FIREBASE_URL
@@ -40,3 +41,12 @@ def set_summary_count(group_id, count):
 def delete_group_data(group_id):
     group_ref = db.reference(f'groups/{group_id}')
     group_ref.delete()
+
+def check_fortune_usage(user_id):
+    today = datetime.now().strftime("%Y-%m-%d")
+    user_ref = db.reference(f'users/{user_id}/fortune_usage')
+    last_usage = user_ref.get()
+    if last_usage == today:
+        return False
+    user_ref.set(today)
+    return True
