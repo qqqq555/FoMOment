@@ -114,7 +114,7 @@ def handle_message(event):
         elif user_message.startswith("展覽資訊_"):
             response = handle_exhibition_info(city)
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=response))
-
+            return
         elif user_message == '查詢展覽':
             quickbutton = TextSendMessage(
                 text='選擇您想查詢的區域：',
