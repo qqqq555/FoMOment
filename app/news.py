@@ -1,7 +1,7 @@
 from gnews import GNews
 from app.config import Config
 
-google_news = GNews(language=Config.NEWS_LANGUAGE, country='Taiwan', max_results=10)
+google_news = GNews(language=Config.NEWS_LANGUAGE, country='TW', max_results=10)
 
 def get_news_carousel():
     try:
