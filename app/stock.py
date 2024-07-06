@@ -12,7 +12,7 @@ if not os.path.exists('data'):
     os.makedirs('data')
 
 
-def get_kline():
+'''def get_kline():
     target_stock = '2330'  #股票代號變數
     stock = twstock.Stock(target_stock)  #告訴twstock我們要查詢的股票
     target_price = stock.fetch_from(2022, 5)  #取用2020/05至今每天的交易資料
@@ -95,7 +95,7 @@ def get_kline():
 
     # Get the public URL
     public_url = blob.public_url
-    print(f"Image uploaded to: {public_url}")
+    print(f"Image uploaded to: {public_url}") '''
 
 def get_stock_info(stock_code):
     # Determine if it's an OTC stock (starts with '6')
@@ -143,8 +143,6 @@ def get_stock_info(stock_code):
     info += f"最高價: {df['最高價'].values[0]}\n"
     info += f"最低價: {df['最低價'].values[0]}\n"
     info += f"昨收價: {df['昨收價'].values[0]}\n"
-    info += f"更新時間: {df['資料更新時間'].values[0]}"
-    get_kline()
-    
+    info += f"更新時間: {df['資料更新時間'].values[0]}"  
     return info
 
