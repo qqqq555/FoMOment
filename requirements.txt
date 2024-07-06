@@ -4,6 +4,3 @@ firebase-admin
 google-generativeai
 gunicorn
 pandas
-mplfinance
-twstock
-google.cloud
