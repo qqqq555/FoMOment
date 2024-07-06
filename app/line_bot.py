@@ -269,7 +269,6 @@ def handle_message(event):
             columns = []
             for item in news_items:
                 column = CarouselColumn(
-                    thumbnail_image_url=item['image'] if item.get('image') else 'https://storage.googleapis.com/sitconimg/img/news.png', 
                     title=item['title'][:40] + '...' if len(item['title']) > 40 else item['title'],
                     text=item['description'][:60] + '...' if len(item['description']) > 60 else item['description'],
                     actions=[
