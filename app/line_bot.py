@@ -112,6 +112,7 @@ def handle_message(event):
             line_bot_api.reply_message(event.reply_token, template_message)
             return
         elif user_message.startswith("展覽資訊_"):
+            city = user_message.split("_")[1]
             response = handle_exhibition_info(city)
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text=response))
             return
@@ -139,8 +140,6 @@ def handle_message(event):
                     ]
                 )
             )
-            response = handle_exhibition_info(city)
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=response))
             line_bot_api.reply_message(event.reply_token, quickbutton)
             return
         elif user_message == '中部的展覽':
