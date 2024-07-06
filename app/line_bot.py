@@ -1,12 +1,13 @@
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import MessageEvent, TextMessage, TextSendMessage, JoinEvent, LeaveEvent,CarouselTemplate
-from app.firebase import get_messages, clear_messages, add_message, get_summary_count, set_summary_count, delete_group_data
+from app.firebase import get_messages, clear_messages, add_message, get_summary_count, set_summary_count, delete_group_data, check_fortune_usage
 from app.gemini import summarize_with_gemini
 from app.config import Config
 from app.exhibition import get_exhibition_data, filter_exhibitions, format_exhibition_info
 from app.type import TemplateSendMessage
 from app.stock import get_stock_info
+from app.fortune import get_daily_fortune, create_fortune_flex_message
 import threading
 line_bot_api = LineBotApi(Config.LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(Config.LINE_CHANNEL_SECRET)
@@ -28,7 +29,19 @@ def handle_leave(event):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     if event.source.type == 'user':
+        user_id = event.source.user_id
         user_message = event.message.text
+        if user_message == "每日運勢":
+            if check_fortune_usage(user_id):
+                fortune, message = get_daily_fortune()
+                flex_message = create_fortune_flex_message(fortune, message)
+                line_bot_api.reply_message(event.reply_token, flex_message)
+            else:
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text="您今天已經查看過運勢了，明天再來吧！")
+                )
+            return
         if user_message.startswith("展覽資訊_"):
             city = user_message.split("_")[1]
             exhibitions = get_exhibition_data()
