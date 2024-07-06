@@ -38,10 +38,9 @@ def handle_message(event):
                     flex_message = create_fortune_flex_message(fortune, message)
                     line_bot_api.reply_message(event.reply_token, flex_message)
                 except Exception as e:
-                    print(f"Error in daily fortune: {str(e)}")
                     line_bot_api.reply_message(
                         event.reply_token,
-                        TextSendMessage(text="抱歉，獲取今日運勢時出現錯誤，請稍後再試。")
+                        TextSendMessage(text=f"Error in daily fortune: {str(e)}")
                     )
             else:
                 line_bot_api.reply_message(
