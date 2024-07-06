@@ -13,7 +13,7 @@ def get_stock_info(stock_code):
     query_url = f'http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch={stock_list}'
     
     response = requests.get(query_url)
-    if response.status_code != 200:
+    if response.status_code == 404 OR response.status_code == 500:
         return "取得股票資訊失敗。"
     
     data = json.loads(response.text)
