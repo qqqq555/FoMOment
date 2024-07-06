@@ -72,12 +72,12 @@ def handle_message(event):
                 TextSendMessage(text=stock_info)
             )
             return
-        elif  user_message == '!輪播樣板':
+        elif  user_message == '拜託':
             carousel_template = CarouselTemplate(columns=[
                 CarouselColumn(
                     text='選項 1',
                     title='標題 1',
-                    thumbnail_image_url='../img/大吉.png',
+                    thumbnail_image_url='https://storage.cloud.google.com/sitconimg/img/%E4%B8%AD%E5%90%89.png',
                     actions=[
                         MessageAction(label='按鈕 1', text='按鈕 1')
                     ]
@@ -85,7 +85,7 @@ def handle_message(event):
                 CarouselColumn(
                     text='連結',
                     title='連結',
-                    thumbnail_image_url='../img/大吉.png',
+                    thumbnail_image_url='https://storage.cloud.google.com/sitconimg/img/%E4%B8%AD%E5%90%89.png',
                     actions=[
                         URIAction(label='前往GOOGLE', uri='https://www.google.com')
                     ]
