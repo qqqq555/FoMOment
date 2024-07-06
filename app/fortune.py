@@ -47,7 +47,7 @@ def create_fortune_flex_message(fortune, message):
             layout="vertical",
             contents=[
                 ImageComponent(
-                    url=f"https://github.com/qqqq555/FoMOment/blob/main/img/{fortune}.png",
+                    url=f"https://raw.githubusercontent.com/qqqq555/FoMOment/main/{fortune}.png",
                     size="full",
                     aspect_mode="cover",
                     aspect_ratio="1:1"
