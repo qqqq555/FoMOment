@@ -104,7 +104,7 @@ def handle_message(event):
             line_bot_api.reply_message(event.reply_token, template_message)
             return
         elif user_message == '展覽資訊':
-            return TextSendMessage(
+            quickbutton = TextSendMessage(
                 text='選擇您想查詢的城市：',
                 quick_reply=QuickReply(
                     items=[
@@ -127,6 +127,7 @@ def handle_message(event):
                     ]
                 )
             )
+            line_bot_api.reply_message(event.reply_token, quickbutton)
         else:
             line_bot_api.reply_message(
                 event.reply_token,
