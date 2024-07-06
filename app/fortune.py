@@ -1,5 +1,4 @@
 import random
-from datetime import datetime
 from linebot.models import FlexSendMessage, BubbleContainer, BoxComponent, TextComponent, ImageComponent
 
 FORTUNES = ["大吉", "吉", "中吉", "小吉", "末吉", "凶"]
