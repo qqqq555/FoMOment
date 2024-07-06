@@ -91,9 +91,14 @@ import datetime'''
 import twstock
 import datetime
 
+import twstock
+import datetime
+
 def get_stock_info(stock_code):
     try:
+        print(f"Fetching real-time data for stock code: {stock_code}")
         stock = twstock.realtime.get(stock_code)
+        print(f"Stock data fetched: {stock}")
         
         if stock['success']:
             info = f"股票代號: {stock_code}\n"
@@ -125,3 +130,6 @@ def get_stock_info(stock_code):
             return "無法獲取即時股票資訊。"
     except Exception as e:
         return f"發生錯誤：{str(e)}"
+
+# Example usage
+print(get_stock_info('2330'))  # Replace '2330' with the actual stock code
