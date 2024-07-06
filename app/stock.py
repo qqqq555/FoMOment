@@ -80,7 +80,7 @@ def get_kline():
 
     # Set up the Google Cloud Storage client
     storage_client = storage.Client()
-    bucket_name = 'your-bucket-name'  # Replace with your actual bucket name
+    bucket_name = 'sitconimg'  # Replace with your actual bucket name
     bucket = storage_client.bucket(bucket_name)
 
     # Create a blob and upload the image
