@@ -103,6 +103,11 @@ def handle_message(event):
             template_message = TemplateSendMessage(alt_text="輪播樣板", template=carousel_template)
             line_bot_api.reply_message(event.reply_token, template_message)
             return
+        else:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text="抱歉，我不太懂您的意思，可以試著問我其他問題喔！")
+            )
     elif event.source.type == 'group':
         group_id = event.source.group_id
         user_message = event.message.text
