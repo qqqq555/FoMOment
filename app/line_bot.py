@@ -5,7 +5,6 @@ from app.firebase import get_messages, clear_messages, add_message, get_summary_
 from app.gemini import summarize_with_gemini
 from app.config import Config
 from app.exhibition import get_exhibition_data, filter_exhibitions, format_exhibition_info
-from app.temtem import template_message
 from app.stock import get_stock_info
 from app.fortune import get_daily_fortune, create_fortune_flex_message
 import threading
