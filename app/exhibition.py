@@ -1,6 +1,5 @@
 import requests
 from datetime import datetime, timedelta
-from linebot.models import CarouselTemplate, CarouselColumn, MessageAction, URIAction, TemplateSendMessage
 
 def get_exhibition_data():
     url = "https://cloud.culture.tw/frontsite/trans/SearchShowAction.do?method=doFindTypeJ&category=6"
@@ -28,37 +27,20 @@ def filter_exhibitions(exhibitions, city):
     
     return sorted(filtered, key=lambda x: (x['days_left'] is None, x['days_left'], x['days_to_start']))[:5]
 
-def create_carousel_template(exhibitions):
-    columns = []
+def format_exhibition_info(exhibitions):
+    formatted_info = "展覽資訊：\n\n"
     for exhibition in exhibitions:
-        location = exhibition['showInfo'][0]['location'] if exhibition['showInfo'] else '未知地點'
-        title = exhibition['title'] if exhibition['title'] else '未知展覽名稱'
-        thumbnail_image_url = exhibition.get('image', 'https://storage.googleapis.com/你的圖片連結.png')
-        columns.append(
-            CarouselColumn(
-                text=location,
-                title=title,
-                thumbnail_image_url=thumbnail_image_url,
-                actions=[
-                    MessageAction(label='按鈕 1', text=f"展覽名稱：{title}\n地點：{location}"),
-                    URIAction(label='更多資訊', uri=exhibition['webSales'] if 'webSales' in exhibition else 'https://www.google.com')
-                ]
-            )
-        )
-    carousel_template = CarouselTemplate(columns=columns)
-    return TemplateSendMessage(alt_text='輪播樣板', template=carousel_template)
-
-def main(city):
-    exhibitions = get_exhibition_data()
-    if exhibitions:
-        filtered_exhibitions = filter_exhibitions(exhibitions, city)
-        if filtered_exhibitions:
-            return create_carousel_template(filtered_exhibitions)
+        formatted_info += f"展覽名稱：{exhibition['title']}\n"
+        if exhibition['showInfo']:
+            formatted_info += f"地點：{exhibition['showInfo'][0]['location']}\n"
+            formatted_info += f"開始時間：{exhibition['showInfo'][0]['time']}\n"
+            formatted_info += f"結束時間：{exhibition['showInfo'][0]['endTime']}\n"
+        formatted_info += f"開始日期：{exhibition['startDate']}\n"
+        formatted_info += f"結束日期：{exhibition['endDate']}\n"
+        if exhibition['days_left'] is not None:
+            formatted_info += f"剩餘天數：{exhibition['days_left']}天\n"
         else:
-            return "目前沒有符合條件的展覽。"
-    else:
-        return "無法獲取展覽數據。~~"
-
-// In your main function or webhook handler, you would call:
-city = '台北市'  # Replace with the city you want to filter by
-carousel_message = main(city)
+            formatted_info += f"距離開始：{exhibition['days_to_start']}天\n"
+        formatted_info += f"主辦單位：{', '.join(exhibition['masterUnit'])}\n"
+        formatted_info += f"簡介：{exhibition['descriptionFilterHtml'][:100]}...\n\n"
+    return formatted_info
