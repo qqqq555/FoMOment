@@ -7,6 +7,7 @@ from app.config import Config
 from app.exhibition import get_exhibition_data, filter_exhibitions, format_exhibition_info
 from app.stock import get_stock_info
 from app.fortune import get_daily_fortune, create_fortune_flex_message
+from app.news import get_top_headlines
 import threading
 
 line_bot_api = LineBotApi(Config.LINE_CHANNEL_ACCESS_TOKEN)
@@ -96,6 +97,13 @@ def handle_message(event):
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text=stock_info)
+            )
+            return
+        elif user_message == "頭條新聞":
+            news = get_top_headlines()
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=news)
             )
             return
         elif user_message == '拜託':
