@@ -10,11 +10,18 @@ def get_stock_info(stock_code):
     else:
         stock_list = f'tse_{stock_code}.tw'
 
-    query_url = f'http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch={stock_list}'
+    query_url = f'https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch={stock_list}'
     
-    response = requests.get(query_url)
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Encoding': 'gzip, deflate, br, zstd',
+        'Host': 'mis.twse.com.tw'
+    }
+    
+    response = requests.get(query_url, headers=headers)
     if response.status_code != 200:
-        return response.status_code
+        return f"Error: {response.status_code}"
     
     data = json.loads(response.text)
     if not data['msgArray']:
@@ -52,3 +59,7 @@ def get_stock_info(stock_code):
     info += f"更新時間: {df['資料更新時間'].values[0]}"
     
     return info
+
+# Example usage
+stock_code = '2330'  # Replace with the desired stock code
+print(get_stock_info(stock_code))
