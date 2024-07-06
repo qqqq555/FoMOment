@@ -4,4 +4,3 @@ firebase-admin
 google-generativeai
 gunicorn
 pandas
-random
