@@ -101,9 +101,11 @@ def handle_message(event):
                 )
             return
         elif user_message == '展覽資訊_台北':
-            template_message = create_carousel_from_exhibitions(exhibitions)
+            exhibitions = get_exhibition_data()
+            filtered_exhibitions = filter_exhibitions(exhibitions, '台北')
+            template_message = create_carousel_from_exhibitions(filtered_exhibitions)
             line_bot_api.reply_message(event.reply_token, template_message)
-             return
+            return
         elif user_message.startswith("展覽資訊_"):
             city = user_message.split("_")[1]
             response = handle_exhibition_info(city)
@@ -366,6 +368,7 @@ def handle_exhibition_info(city):
     else:
         response = "抱歉，無法獲取展覽資訊。請稍後再試。"
     return response
+
 def create_carousel_from_exhibitions(exhibitions):
     columns = []
     for exhibition in exhibitions:
@@ -383,27 +386,3 @@ def create_carousel_from_exhibitions(exhibitions):
     carousel_template = CarouselTemplate(columns=columns)
     template_message = TemplateSendMessage(alt_text="輪播樣板", template=carousel_template)
     return template_message
-exhibitions = [
-    {
-        "title": "展覽A",
-        "showInfo": [{"locationName": "地點A"}],
-        "startDate": "2024-01-01",
-        "endDate": "2024-02-01",
-        "sourceWebPromote": "http://example.com",
-        "days_left": 10,
-        "days_to_start": None,
-        "masterUnit": ["主辦單位A"],
-        "descriptionFilterHtml": "這是展覽A的簡介。"
-    },
-    {
-        "title": "展覽B",
-        "showInfo": [{"locationName": "地點B"}],
-        "startDate": "2024-03-01",
-        "endDate": "2024-04-01",
-        "sourceWebPromote": "http://example.com",
-        "days_left": 20,
-        "days_to_start": None,
-        "masterUnit": ["主辦單位B"],
-        "descriptionFilterHtml": "這是展覽B的簡介。"
-    }
-]

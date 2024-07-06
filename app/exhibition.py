@@ -36,6 +36,10 @@ def format_exhibition_info(exhibitions):
             formatted_info += f"地點：{exhibition['showInfo'][0]['locationName']}\n"
         formatted_info += f"開始日期：{exhibition['startDate']}\n"
         formatted_info += f"結束日期：{exhibition['endDate']}\n"
+        if exhibition['days_left'] is not None:
+            formatted_info += f"剩餘天數：{exhibition['days_left']}天\n"
+        else:
+            formatted_info += f"距離開始：{exhibition['days_to_start']}天\n"
         formatted_info += f"活動官網：{exhibition['sourceWebPromote']}\n"
         if exhibition['days_left'] is not None:
             formatted_info += f"剩餘天數：{exhibition['days_left']}天\n"
