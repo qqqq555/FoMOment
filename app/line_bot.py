@@ -14,6 +14,7 @@ from app.config import Config
 from app.exhibition import get_exhibition_data, filter_exhibitions, format_exhibition_info
 from app.stock import get_stock_info
 from app.fortune import get_daily_fortune, create_fortune_flex_message
+from app.news import get_top_headlines
 import threading
 
 line_bot_api = LineBotApi(Config.LINE_CHANNEL_ACCESS_TOKEN)
@@ -105,6 +106,13 @@ def handle_message(event):
                 TextSendMessage(text=stock_info)
             )
             return
+        elif user_message == "頭條新聞":
+            news = get_top_headlines()
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=news)
+            )
+            return
         elif user_message == '拜託':
             carousel_template = CarouselTemplate(columns=[
                 CarouselColumn(
@@ -178,6 +186,71 @@ def handle_message(event):
                 )
             )
             line_bot_api.reply_message(event.reply_token, quickbutton)
+            return
+        elif user_message == '展覽資訊_中部':
+                quickbutton = TextSendMessage(
+                    text='選擇您想查詢的中部城市：',
+                    quick_reply=QuickReply(
+                        items=[
+                            QuickReplyButton(
+                                action=MessageAction(label='苗栗', text='展覽資訊_苗栗'),
+                                image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
+                            ),
+                            QuickReplyButton(
+                                action=MessageAction(label='台中', text='展覽資訊_台中'),
+                                image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
+                            ),
+                            QuickReplyButton(
+                                action=MessageAction(label='彰化', text='展覽資訊_彰化'),
+                                image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
+                            ),
+                            QuickReplyButton(
+                                action=MessageAction(label='南投', text='展覽資訊_南投'),
+                                image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
+                            ),
+                            QuickReplyButton(
+                                action=MessageAction(label='雲林', text='展覽資訊_雲林'),
+                                image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
+                            )
+                        ]
+                    )
+                )
+                line_bot_api.reply_message(event.reply_token, quickbutton)
+                return
+        elif user_message == '展覽資訊_北部':
+                quickbutton = TextSendMessage(
+                    text='選擇您想查詢的北部城市：',
+                    quick_reply=QuickReply(
+                        items=[
+                            QuickReplyButton(
+                                action=MessageAction(label='台中', text='展覽資訊_台北'),
+                                image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
+                            ),
+                            QuickReplyButton(
+                                action=MessageAction(label='彰化', text='展覽資訊_新北'),
+                                image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
+                            ),
+                            QuickReplyButton(
+                                action=MessageAction(label='南投', text='展覽資訊_桃園'),
+                                image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
+                            ),
+                            QuickReplyButton(
+                                action=MessageAction(label='基隆', text='展覽資訊_基隆'),
+                                image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
+                            ),
+                            QuickReplyButton(
+                                action=MessageAction(label='宜蘭', text='展覽資訊_宜蘭'),
+                                image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
+                            ),
+                            QuickReplyButton(
+                                action=MessageAction(label='新竹', text='展覽資訊_新竹'),
+                                image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
+                            )
+                        ]
+                    )
+                )
+                line_bot_api.reply_message(event.reply_token, quickbutton)
+                return
             return
         elif user_message == '展覽資訊_北部':
             quickbutton = TextSendMessage(
@@ -256,6 +329,13 @@ def handle_message(event):
                 )
             )
             line_bot_api.reply_message(event.reply_token, quickbutton)
+            return
+                
+        else:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text="抱歉，我不太懂您的意思，可以試著問我其他問題喔！")
+            )
             return
         else:
             line_bot_api.reply_message(
