@@ -4,24 +4,12 @@ from linebot.models import FlexSendMessage, BubbleContainer, BoxComponent, TextC
 FORTUNES = ["大吉", "吉", "中吉", "小吉", "末吉", "凶"]
 
 FORTUNES_IMAGES = {
-    "大吉": [
-        "https://storage.googleapis.com/sitconimg/img/%E5%A4%A7%E5%90%89.png"
-    ],
-    "吉": [
-        "https://storage.googleapis.com/sitconimg/img/%E5%90%89.png"
-    ],
-    "中吉": [
-        "https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png"
-    ],
-    "小吉": [
-        "https://storage.googleapis.com/sitconimg/img/%E5%B0%8F%E5%90%89.png"
-    ],
-    "末吉": [
-        "https://storage.googleapis.com/sitconimg/img/%E6%9C%AB%E5%90%89.png"
-    ],
-    "凶": [
-        "https://storage.googleapis.com/sitconimg/img/%E5%87%B6.png"
-    ]
+    "大吉": "https://storage.googleapis.com/sitconimg/img/%E5%A4%A7%E5%90%89.png",
+    "吉": "https://storage.googleapis.com/sitconimg/img/%E5%90%89.png",
+    "中吉": "https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png",
+    "小吉": "https://storage.googleapis.com/sitconimg/img/%E5%B0%8F%E5%90%89.png",
+    "末吉": "https://storage.googleapis.com/sitconimg/img/%E6%9C%AB%E5%90%89.png",
+    "凶": "https://storage.googleapis.com/sitconimg/img/%E5%87%B6.png"
 }
 
 FORTUNE_MESSAGES = {
