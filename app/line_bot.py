@@ -246,7 +246,23 @@ def handle_message(event):
                 TextSendMessage(text="抱歉，我不太懂您的意思，可以試著問我其他問題喔！")
             )
             return
-    
+        if user_message.startswith("展覽資訊_"):
+            city = user_message.split("_")[1]
+            exhibitions = get_exhibition_data()
+            if exhibitions:
+                filtered_exhibitions = filter_exhibitions(exhibitions, city)
+                if filtered_exhibitions:
+                    response = format_exhibition_info(filtered_exhibitions)
+                else:
+                    response = f"抱歉，目前沒有找到{city}的展覽資訊。請確保城市名稱正確，例如：臺北、臺中、高雄等。"
+            else:
+                response = "抱歉，無法獲取展覽資訊。請稍後再試。"
+
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=response)
+            )
+            return
     elif event.source.type == 'group':
         group_id = event.source.group_id
         user_message = event.message.text
