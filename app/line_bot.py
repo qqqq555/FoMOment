@@ -269,6 +269,7 @@ def handle_message(event):
             columns = []
             for item in news_items:
                 column = CarouselColumn(
+                    type= 'uri',
                     title=item['title'][:40] + '...' if len(item['title']) > 40 else item['title'],
                     text=item['description'][:60] + '...' if len(item['description']) > 60 else item['description'],
                     actions=[
