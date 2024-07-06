@@ -100,28 +100,10 @@ def handle_message(event):
                     TextSendMessage(text="抱歉，處理股票資訊時發生錯誤。")
                 )
             return
-        elif user_message == '拜託':
-            carousel_template = CarouselTemplate(columns=[
-                CarouselColumn(
-                    text='選項 1',
-                    title='標題 1',
-                    thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png',
-                    actions=[
-                        MessageAction(label='按鈕 1', text='按鈕 1')
-                    ]
-                ),
-                CarouselColumn(
-                    text='連結',
-                    title='連結',
-                    thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png',
-                    actions=[
-                        URIAction(label='前往GOOGLE', uri='https://www.google.com')
-                    ]
-                )
-            ])
-            template_message = TemplateSendMessage(alt_text="輪播樣板", template=carousel_template)
+        elif user_message == '展覽資訊_台北':
+            template_message = create_carousel_from_exhibitions(exhibitions)
             line_bot_api.reply_message(event.reply_token, template_message)
-            return
+             return
         elif user_message.startswith("展覽資訊_"):
             city = user_message.split("_")[1]
             response = handle_exhibition_info(city)
@@ -384,3 +366,44 @@ def handle_exhibition_info(city):
     else:
         response = "抱歉，無法獲取展覽資訊。請稍後再試。"
     return response
+def create_carousel_from_exhibitions(exhibitions):
+    columns = []
+    for exhibition in exhibitions:
+        columns.append(
+            CarouselColumn(
+                text=f'結束日期: {exhibition["endDate"]}',
+                title=exhibition['title'],
+                thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png',
+                actions=[
+                    URIAction(label='前往官網', uri=exhibition['sourceWebPromote'])
+                ]
+            )
+        )
+    
+    carousel_template = CarouselTemplate(columns=columns)
+    template_message = TemplateSendMessage(alt_text="輪播樣板", template=carousel_template)
+    return template_message
+exhibitions = [
+    {
+        "title": "展覽A",
+        "showInfo": [{"locationName": "地點A"}],
+        "startDate": "2024-01-01",
+        "endDate": "2024-02-01",
+        "sourceWebPromote": "http://example.com",
+        "days_left": 10,
+        "days_to_start": None,
+        "masterUnit": ["主辦單位A"],
+        "descriptionFilterHtml": "這是展覽A的簡介。"
+    },
+    {
+        "title": "展覽B",
+        "showInfo": [{"locationName": "地點B"}],
+        "startDate": "2024-03-01",
+        "endDate": "2024-04-01",
+        "sourceWebPromote": "http://example.com",
+        "days_left": 20,
+        "days_to_start": None,
+        "masterUnit": ["主辦單位B"],
+        "descriptionFilterHtml": "這是展覽B的簡介。"
+    }
+]
