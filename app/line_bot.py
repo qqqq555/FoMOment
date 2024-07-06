@@ -11,6 +11,7 @@ import threading
 
 line_bot_api = LineBotApi(Config.LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(Config.LINE_CHANNEL_SECRET)
+user_states = {}
 
 @handler.add(JoinEvent)
 def handle_join(event):
@@ -51,15 +52,27 @@ def handle_message(event):
                     TextSendMessage(text="您今天已經查看過運勢了，明天再來吧！")
                 )
             return
-        elif user_message.startswith("我需要聊聊"):
-            message = user_message[6:].strip()
-            reply = talk_to_gemini(message)
-
+        elif user_message.startswith("我想要聊聊"):
+            user_states[user_id] = {'active': True}
+            initial_reply = "沒問題，想結束聊天的時候請說掰掰。現在，你想聊些什麼呢？"
             line_bot_api.reply_message(
                 event.reply_token,
-                TextSendMessage(text=reply)
+                TextSendMessage(text=initial_reply)
             )
-            return
+        elif user_id in user_states and user_states[user_id]['active']:
+            if user_message.lower() == "掰掰":
+                user_states[user_id]['active'] = False
+                end_reply = "謝謝聊天，下次再見！"
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text=end_reply)
+                )
+            else:
+                reply = talk_to_gemini(user_message)
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text=reply)
+                )
         elif user_message.startswith("展覽資訊_"):
             city = user_message.split("_")[1]
             exhibitions = get_exhibition_data()
