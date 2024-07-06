@@ -42,7 +42,7 @@ def handle_message(event):
                     TextSendMessage(text="您今天已經查看過運勢了，明天再來吧！")
                 )
             return
-        if user_message.startswith("展覽資訊_"):
+        elif user_message.startswith("展覽資訊_"):
             city = user_message.split("_")[1]
             exhibitions = get_exhibition_data()
             if exhibitions:
@@ -59,7 +59,7 @@ def handle_message(event):
                 TextSendMessage(text=response)
             )
             return
-        if user_message.startswith("股票_"):
+        elif user_message.startswith("股票_"):
             stock_code = user_message.split("_")[1]
             stock_info = get_stock_info(stock_code)
             line_bot_api.reply_message(
