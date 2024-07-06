@@ -3,7 +3,7 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, JoinEvent, LeaveEvent,
     TemplateSendMessage, MessageAction, CarouselColumn, CarouselTemplate, 
-    URIAction, QuickReply, QuickReplyButton
+    URIAction, QuickReply, QuickReplyButton, PostbackAction
 )
 from app.firebase import (
     get_messages, clear_messages, add_message, get_summary_count, 
@@ -14,7 +14,7 @@ from app.config import Config
 from app.exhibition import get_exhibition_data, filter_exhibitions, format_exhibition_info
 from app.stock import get_stock_info
 from app.fortune import get_daily_fortune, create_fortune_flex_message
-from app.news import get_top_headlines
+from app.news import get_news_carousel
 import threading
 
 line_bot_api = LineBotApi(Config.LINE_CHANNEL_ACCESS_TOKEN)
@@ -242,12 +242,37 @@ def handle_message(event):
             line_bot_api.reply_message(event.reply_token, quickbutton)
             return
         elif user_message == "頭條新聞":
-            news = get_top_headlines()
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text=news)
+            news_items = get_news_carousel()
+            if not news_items:
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text="抱歉，無法獲取新聞，請稍後再試。")
+                )
+                return
+
+            columns = []
+            for item in news_items:
+                column = CarouselColumn(
+                    thumbnail_image_url=item['image'] if item.get('image') else 'https://storage.googleapis.com/sitconimg/img/news.png',
+                    title=item['title'],
+                    actions=[
+                        URIAction(
+                            label='點擊查看',
+                            uri=item['url']
+                        )
+                    ]
+                )
+                columns.append(column)
+
+            carousel_template = CarouselTemplate(columns=columns)
+            template_message = TemplateSendMessage(
+                alt_text='新聞列表',
+                template=carousel_template
             )
+            
+            line_bot_api.reply_message(event.reply_token, template_message)
             return
+
         else:
             line_bot_api.reply_message(
                 event.reply_token,
