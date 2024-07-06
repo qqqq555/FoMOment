@@ -103,6 +103,30 @@ def handle_message(event):
             template_message = TemplateSendMessage(alt_text="輪播樣板", template=carousel_template)
             line_bot_api.reply_message(event.reply_token, template_message)
             return
+        elif user_message == '展覽資訊':
+            return TextSendMessage(
+                text='選擇您想查詢的城市：',
+                quick_reply=QuickReply(
+                    items=[
+                        QuickReplyButton(
+                            action=CameraAction(label='北部'),
+                            image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
+                        ),
+                        QuickReplyButton(
+                            action=CameraRollAction(label='中部'),
+                            image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
+                        ),
+                        QuickReplyButton(
+                            action=LocationAction(label='南部'),
+                            image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
+                        ),
+                        QuickReplyButton(
+                            action=PostbackAction(label='東部', data='action=buy&itemid=123'),
+                            image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
+                        )
+                    ]
+                )
+            )
         else:
             line_bot_api.reply_message(
                 event.reply_token,
