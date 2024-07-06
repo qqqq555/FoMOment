@@ -1,11 +1,11 @@
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage, JoinEvent, LeaveEvent,CarouselTemplate
+from linebot.models import MessageEvent, TextMessage, TextSendMessage, JoinEvent, LeaveEvent
 from app.firebase import get_messages, clear_messages, add_message, get_summary_count, set_summary_count, delete_group_data, check_fortune_usage
 from app.gemini import summarize_with_gemini
 from app.config import Config
 from app.exhibition import get_exhibition_data, filter_exhibitions, format_exhibition_info
-from app.type import TemplateSendMessage
+""" from app.type import TemplateSendMessage """
 from app.stock import get_stock_info
 from app.fortune import get_daily_fortune, create_fortune_flex_message
 import threading
@@ -42,7 +42,7 @@ def handle_message(event):
                     TextSendMessage(text="您今天已經查看過運勢了，明天再來吧！")
                 )
             return
-        if user_message.startswith("展覽資訊_"):
+        elif user_message.startswith("展覽資訊_"):
             city = user_message.split("_")[1]
             exhibitions = get_exhibition_data()
             if exhibitions:
@@ -59,7 +59,7 @@ def handle_message(event):
                 TextSendMessage(text=response)
             )
             return
-        if user_message.startswith("股票_"):
+        elif user_message.startswith("股票_"):
             stock_code = user_message.split("_")[1]
             stock_info = get_stock_info(stock_code)
             line_bot_api.reply_message(
