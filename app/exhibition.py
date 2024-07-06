@@ -28,27 +28,18 @@ def filter_exhibitions(exhibitions, city):
     return sorted(filtered, key=lambda x: (x['days_left'] is None, x['days_left'], x['days_to_start']))[:5]
 
 def format_exhibition_info(exhibitions):
-    columns = []
+    formatted_info = "展覽資訊：\n\n"
     for exhibition in exhibitions:
-        title = exhibition['title']
-        show_info = exhibition['showInfo'][0]
-        show_unit = exhibition['showUnit']
-        description = exhibition['descriptionFilterHtml']
-        master_unit = exhibition['masterUnit']
-        web_sales = exhibition['webSales']
-        start_date = exhibition['startDate']
-        end_date = exhibition['endDate']
-
-        column = CarouselColumn(
-            text=f"展覽名稱：{title}",
-            title=title,
-            thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png',
-            actions=[
-                MessageAction(label='查看詳情', text=f"{title} 詳情"),
-                URIAction(label='前往Google', uri='https://www.google.com')
-            ]
-        )
-        columns.append(column)
-    
-    carousel_template = CarouselTemplate(columns=columns)
-    return carousel_template
+        formatted_info += f"展覽名稱：{exhibition['title']}\n"
+        if exhibition['showInfo']:
+            formatted_info += f"地點：{exhibition['showInfo'][0]['locationName']}\n"
+        formatted_info += f"開始日期：{exhibition['startDate']}\n"
+        formatted_info += f"結束日期：{exhibition['endDate']}\n"
+        formatted_info += f"活動官網：{exhibition['sourceWebPromote']}\n"
+        if exhibition['days_left'] is not None:
+            formatted_info += f"剩餘天數：{exhibition['days_left']}天\n"
+        else:
+            formatted_info += f"距離開始：{exhibition['days_to_start']}天\n"
+        formatted_info += f"主辦單位：{', '.join(exhibition['masterUnit'])}\n"
+        formatted_info += f"簡介：{exhibition['descriptionFilterHtml'][:100]}...\n\n"
+    return formatted_info
