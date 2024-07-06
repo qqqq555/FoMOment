@@ -5,7 +5,7 @@ from app.firebase import get_messages, clear_messages, add_message, get_summary_
 from app.gemini import summarize_with_gemini
 from app.config import Config
 from app.exhibition import get_exhibition_data, filter_exhibitions, format_exhibition_info
-from app.stock import get_stock_info
+from app.stock import get_stock_info, talk_to_gemini
 from app.fortune import get_daily_fortune, create_fortune_flex_message
 import threading
 line_bot_api = LineBotApi(Config.LINE_CHANNEL_ACCESS_TOKEN)
@@ -72,6 +72,15 @@ def handle_message(event):
                 TextSendMessage(text=stock_info)
             )
             return
+        elif user_message.startswith("我需要聊聊"):
+                message = user_message[6:].strip()
+                reply = talk_to_gemini(message)
+
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text=reply)
+                )
+                return
         elif  user_message == '!輪播樣板':
             carousel_template = CarouselTemplate(columns=[
                 CarouselColumn(
