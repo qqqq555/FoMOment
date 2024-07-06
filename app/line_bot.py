@@ -72,7 +72,7 @@ def handle_message(event):
                 TextSendMessage(text=stock_info)
             )
             return
-        elif  user_message == '拜託':
+        elif user_message == '拜託':
             carousel_template = CarouselTemplate(columns=[
                 CarouselColumn(
                     text='選項 1',
@@ -91,7 +91,8 @@ def handle_message(event):
                     ]
                 )
             ])
-            TemplateSendMessage(alt_text="輪播樣板", template=carousel_template)
+            template_message = TemplateSendMessage(alt_text="輪播樣板", template=carousel_template)
+            line_bot_api.reply_message(event.reply_token, template_message)
             return
     elif event.source.type == 'group':
         group_id = event.source.group_id
