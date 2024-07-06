@@ -100,6 +100,7 @@ def handle_message(event):
                     TextSendMessage(text="抱歉，處理股票資訊時發生錯誤。")
                 )
             return
+<<<<<<< HEAD
         elif user_message == '拜託':
             carousel_template = CarouselTemplate(columns=[
                 CarouselColumn(
@@ -120,6 +121,12 @@ def handle_message(event):
                 )
             ])
             template_message = TemplateSendMessage(alt_text="輪播樣板", template=carousel_template)
+=======
+        elif user_message == '展覽資訊_台北':
+            exhibitions = get_exhibition_data()
+            filtered_exhibitions = filter_exhibitions(exhibitions, '台北')
+            template_message = create_carousel_from_exhibitions(filtered_exhibitions)
+>>>>>>> d51f9faa414b082c99fa49ea478b50aabb21b4ec
             line_bot_api.reply_message(event.reply_token, template_message)
             return
         elif user_message.startswith("展覽資訊_"):
@@ -384,3 +391,24 @@ def handle_exhibition_info(city):
     else:
         response = "抱歉，無法獲取展覽資訊。請稍後再試。"
     return response
+<<<<<<< HEAD
+=======
+
+def create_carousel_from_exhibitions(exhibitions):
+    columns = []
+    for exhibition in exhibitions:
+        columns.append(
+            CarouselColumn(
+                text=f'結束日期: {exhibition["endDate"]}',
+                title=exhibition['title'],
+                thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png',
+                actions=[
+                    URIAction(label='前往官網', uri=exhibition['sourceWebPromote'])
+                ]
+            )
+        )
+    
+    carousel_template = CarouselTemplate(columns=columns)
+    template_message = TemplateSendMessage(alt_text="輪播樣板", template=carousel_template)
+    return template_message
+>>>>>>> d51f9faa414b082c99fa49ea478b50aabb21b4ec
