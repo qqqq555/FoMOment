@@ -81,6 +81,11 @@ def handle_message(event):
                     event.reply_token,
                     TextSendMessage(text=reply)
                 )
+        elif user_message.startswith("股票資訊"):
+            line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text="請利用以下格式進行查詢：股票_股票代號，例如：股票_2330")
+                )
         elif user_message.startswith("股票_"):
             stock_code = user_message.split("_")[1]
             try:
