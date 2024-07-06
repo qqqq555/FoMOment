@@ -1,4 +1,3 @@
-'''
 import requests
 import json
 import pandas as pd
@@ -55,8 +54,8 @@ def get_stock_info(stock_code):
     return info
 
 print(get_stock_info('2330'))
-'''
 
+'''
 import twstock
 import pandas as pd
 import datetime
@@ -114,6 +113,7 @@ def get_stock_info(stock_code):
             return "無法獲取即時股票資訊。"
     except Exception as e:
         return f"發生錯誤：{str(e)}"
+'''
 
 '''
 target_stock = '0050'  # 股票代號變數
