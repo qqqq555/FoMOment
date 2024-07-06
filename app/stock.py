@@ -1,7 +1,7 @@
-import pandas as pd
+'''import pandas as pd
 import requests
 import json
-import datetime
+import datetime'''
 
 '''def get_kline():
     target_stock = '2330'  #股票代號變數
@@ -88,52 +88,41 @@ import datetime
     public_url = blob.public_url
     print(f"Image uploaded to: {public_url}") '''
 
+import twstock
+import datetime
+
 def get_stock_info(stock_code):
-    # Determine if it's an OTC stock (starts with '6')
-    if stock_code.startswith('6'):
-        stock_list = f'otc_{stock_code}.tw'
-    else:
-        stock_list = f'tse_{stock_code}.tw'
-
-    query_url = f'https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch={stock_list}'
-    
-    response = requests.get(query_url)
-    if response.status_code != 200:
-        return response.status_code
-    
-    data = json.loads(response.text)
-    if not data['msgArray']:
-        return "找不到該股票資訊。"
-    
-    stock_data = data['msgArray'][0]
-    
-    columns = ['c', 'n', 'z', 'tv', 'v', 'o', 'h', 'l', 'y', 'tlong']
-    df = pd.DataFrame([stock_data], columns=columns)
-    df.columns = ['股票代號', '公司簡稱', '成交價', '成交量', '累積成交量', '開盤價', '最高價', '最低價', '昨收價', '資料更新時間']
-    
-    # Handle cases where some values might be '-'
-    for col in ['成交價', '昨收價']:
-        df[col] = pd.to_numeric(df[col], errors='coerce')
-
-    if pd.notna(df['成交價'].values[0]) and pd.notna(df['昨收價'].values[0]):
-        df['漲跌百分比'] = (df['成交價'].values[0] - df['昨收價'].values[0]) / df['昨收價'].values[0] * 100
-    else:
-        df['漲跌百分比'] = None
-
-    df['資料更新時間'] = pd.to_datetime(int(df['資料更新時間'].values[0]) / 1000 + 8 * 3600, unit='s').strftime('%Y-%m-%d %H:%M:%S')
-    
-    info = f"股票代號: {df['股票代號'].values[0]}\n"
-    info += f"公司簡稱: {df['公司簡稱'].values[0]}\n"
-    info += f"成交價: {df['成交價'].values[0]}\n"
-    if pd.notna(df['漲跌百分比'].values[0]):
-        info += f"漲跌百分比: {df['漲跌百分比'].values[0]:.2f}%\n"
-    else:
-        info += "漲跌百分比: N/A\n"
-    info += f"成交量: {df['成交量'].values[0]}\n"
-    info += f"開盤價: {df['開盤價'].values[0]}\n"
-    info += f"最高價: {df['最高價'].values[0]}\n"
-    info += f"最低價: {df['最低價'].values[0]}\n"
-    info += f"昨收價: {df['昨收價'].values[0]}\n"
-    info += f"更新時間: {df['資料更新時間'].values[0]}"  
-    return info
-
+    try:
+        stock = twstock.Stock(stock_code)
+        real_time_data = stock.fetch_realtime()
+        
+        if real_time_data['success']:
+            info = f"股票代號: {stock_code}\n"
+            info += f"公司簡稱: {stock.info['name']}\n"
+            info += f"成交價: {real_time_data['realtime']['latest_trade_price']}\n"
+            
+            # Calculate price change percentage
+            yesterday_price = float(real_time_data['realtime']['open'])
+            current_price = float(real_time_data['realtime']['latest_trade_price'])
+            if yesterday_price != 0:
+                change_percent = (current_price - yesterday_price) / yesterday_price * 100
+                info += f"漲跌百分比: {change_percent:.2f}%\n"
+            else:
+                info += "漲跌百分比: N/A\n"
+            
+            info += f"成交量: {real_time_data['realtime']['accumulate_trade_volume']}\n"
+            info += f"開盤價: {real_time_data['realtime']['open']}\n"
+            info += f"最高價: {real_time_data['realtime']['high']}\n"
+            info += f"最低價: {real_time_data['realtime']['low']}\n"
+            info += f"昨收價: {real_time_data['realtime']['yesterday_close']}\n"
+            
+            # Convert timestamp to datetime
+            timestamp = int(real_time_data['timestamp']) / 1000  # Convert milliseconds to seconds
+            update_time = datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
+            info += f"更新時間: {update_time}"
+            
+            return info
+        else:
+            return "無法獲取即時股票資訊。"
+    except Exception as e:
+        return f"發生錯誤：{str(e)}"
