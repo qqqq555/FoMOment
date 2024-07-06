@@ -1,3 +1,4 @@
+'''
 import requests
 import json
 import pandas as pd
@@ -54,8 +55,8 @@ def get_stock_info(stock_code):
     return info
 
 print(get_stock_info('2330'))
-
 '''
+
 import twstock
 import pandas as pd
 import datetime
@@ -66,7 +67,7 @@ def get_stock_info(stock_code):
         stock = twstock.realtime.get(stock_code)
         print(f"Stock data fetched: {stock}")
 
-        if stock['success']:
+        if stock and stock['success']:
             # Extract data and calculate the price change percentage
             open_price = float(stock['realtime'].get('open', 0))
             current_price = float(stock['realtime'].get('latest_trade_price', 0))
@@ -112,8 +113,15 @@ def get_stock_info(stock_code):
         else:
             return "無法獲取即時股票資訊。"
     except Exception as e:
-        return f"發生錯誤：{str(e)}"
-'''
+        print(f"發生錯誤：{str(e)}")
+        # Return a default message or indication of failure
+        return "抱歉，無法獲取股票資訊。"
+
+# Example usage:
+stock_code = '2330'
+print(get_stock_info(stock_code))
+
+
 
 '''
 target_stock = '0050'  # 股票代號變數
