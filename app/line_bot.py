@@ -1,7 +1,14 @@
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage, JoinEvent, LeaveEvent, TemplateSendMessage, MessageAction, CarouselColumn, CarouselTemplate, URIAction, QuickReply, QuickReplyButton
-from app.firebase import get_messages, clear_messages, add_message, get_summary_count, set_summary_count, delete_group_data, check_fortune_usage
+from linebot.models import (
+    MessageEvent, TextMessage, TextSendMessage, JoinEvent, LeaveEvent,
+    TemplateSendMessage, MessageAction, CarouselColumn, CarouselTemplate, 
+    URIAction, QuickReply, QuickReplyButton
+)
+from app.firebase import (
+    get_messages, clear_messages, add_message, get_summary_count, 
+    set_summary_count, delete_group_data, check_fortune_usage
+)
 from app.gemini import summarize_with_gemini, talk_to_gemini
 from app.config import Config
 from app.exhibition import get_exhibition_data, filter_exhibitions, format_exhibition_info
@@ -172,63 +179,21 @@ def handle_message(event):
             )
             line_bot_api.reply_message(event.reply_token, quickbutton)
             return
-            else:
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(text="抱歉，我不太懂您的意思，可以試著問我其他問題喔！")
-                )
-                return
-    elif user_message == '展覽資訊_中部':
-            quickbutton = TextSendMessage(
-                text='選擇您想查詢的中部城市：',
-                quick_reply=QuickReply(
-                    items=[
-                        QuickReplyButton(
-                            action=MessageAction(label='苗栗', text='展覽資訊_苗栗'),
-                            image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
-                        ),
-                        QuickReplyButton(
-                            action=MessageAction(label='台中', text='展覽資訊_台中'),
-                            image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
-                        ),
-                        QuickReplyButton(
-                            action=MessageAction(label='彰化', text='展覽資訊_彰化'),
-                            image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
-                        ),
-                        QuickReplyButton(
-                            action=MessageAction(label='南投', text='展覽資訊_南投'),
-                            image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
-                        ),
-                        QuickReplyButton(
-                            action=MessageAction(label='雲林', text='展覽資訊_雲林'),
-                            image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
-                        )
-                    ]
-                )
-            )
-            line_bot_api.reply_message(event.reply_token, quickbutton)
-            return
-            else:
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(text="抱歉，我不太懂您的意思，可以試著問我其他問題喔！")
-                )
-                return
-    elif user_message == '展覽資訊_北部':
+        elif user_message == '展覽資訊_北部':
             quickbutton = TextSendMessage(
                 text='選擇您想查詢的北部城市：',
                 quick_reply=QuickReply(
                     items=[
                         QuickReplyButton(
-                            action=MessageAction(label='台中', text='展覽資訊_台北'),
+                            action=MessageAction(label='台北', text='展覽資訊_台北'),
                             image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
                         ),
                         QuickReplyButton(
-                            action=MessageAction(label='彰化', text='展覽資訊_新北'),
+                            action=MessageAction(label='新北', text='展覽資訊_新北'),
                             image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
                         ),
                         QuickReplyButton(
-                            action=MessageAction(label='南投', text='展覽資訊_桃園'),
+                            action=MessageAction(label='桃園', text='展覽資訊_桃園'),
                             image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
                         ),
                         QuickReplyButton(
@@ -292,13 +257,12 @@ def handle_message(event):
             )
             line_bot_api.reply_message(event.reply_token, quickbutton)
             return
-            
-            else:
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(text="抱歉，我不太懂您的意思，可以試著問我其他問題喔！")
-                )
-                return
+        else:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text="抱歉，我不太懂您的意思，可以試著問我其他問題喔！")
+            )
+            return
     
     elif event.source.type == 'group':
         group_id = event.source.group_id
