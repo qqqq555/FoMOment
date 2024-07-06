@@ -59,17 +59,11 @@ def create_fortune_flex_message(fortune, message):
                     url=FORTUNES_IMAGES[fortune],
                     size="full",
                     aspect_mode="cover",
-                    aspect_ratio="1:1"
-                ),
-                TextComponent(
-                    text=fortune,
-                    weight="bold",
-                    size="xl",
-                    margin="md"
+                    aspect_ratio="20:13"
                 ),
                 TextComponent(
                     text=message,
-                    size="sm",
+                    size="lg",
                     wrap=True,
                     margin="md"
                 )
