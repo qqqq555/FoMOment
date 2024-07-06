@@ -10,11 +10,11 @@ def get_stock_info(stock_code):
     else:
         stock_list = f'tse_{stock_code}.tw'
 
-    query_url = f'http://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch={stock_list}'
+    query_url = f'https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch={stock_list}'
     
     response = requests.get(query_url)
     if response.status_code != 200:
-        return "取得股票資訊失敗。"
+        return response.status_code
     
     data = json.loads(response.text)
     if not data['msgArray']:
