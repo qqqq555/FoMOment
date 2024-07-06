@@ -110,33 +110,39 @@ def handle_message(event):
             template_message = TemplateSendMessage(alt_text="輪播樣板", template=carousel_template)
             line_bot_api.reply_message(event.reply_token, template_message)
             return
-        elif user_message == '展覽資訊':
+        elif user_message.startswith("展覽資訊_"):
+            response = handle_exhibition_info(city)
+            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=response))
+
+        elif user_message == '查詢展覽':
             quickbutton = TextSendMessage(
-                text='選擇您想查詢的城市：',
+                text='選擇您想查詢的區域：',
                 quick_reply=QuickReply(
                     items=[
                         QuickReplyButton(
-                            action=MessageAction(label='北部', text='展覽資訊_北部'),
+                            action=MessageAction(label='北部', text='北部的展覽'),
                             image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
                         ),
                         QuickReplyButton(
-                            action=MessageAction(label='中部', text='展覽資訊_中部'),
+                            action=MessageAction(label='中部', text='中部的展覽'),
                             image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
                         ),
                         QuickReplyButton(
-                            action=MessageAction(label='南部', text='展覽資訊_南部'),
+                            action=MessageAction(label='南部', text='南部的展覽'),
                             image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
                         ),
                         QuickReplyButton(
-                            action=MessageAction(label='東部', text='展覽資訊_東部'),
+                            action=MessageAction(label='東部', text='東部的展覽'),
                             image_url='https://storage.googleapis.com/sitconimg/img/%E4%B8%AD%E5%90%89.png'
                         )
                     ]
                 )
             )
+            response = handle_exhibition_info(city)
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=response))
             line_bot_api.reply_message(event.reply_token, quickbutton)
             return
-        elif user_message == '展覽資訊_中部':
+        elif user_message == '中部的展覽':
             quickbutton = TextSendMessage(
                 text='選擇您想查詢的中部城市：',
                 quick_reply=QuickReply(
@@ -162,7 +168,7 @@ def handle_message(event):
             )
             line_bot_api.reply_message(event.reply_token, quickbutton)
             return
-        elif user_message == '展覽資訊_北部':
+        elif user_message == '北部的展覽':
             quickbutton = TextSendMessage(
                 text='選擇您想查詢的北部城市：',
                 quick_reply=QuickReply(
@@ -196,7 +202,7 @@ def handle_message(event):
             )
             line_bot_api.reply_message(event.reply_token, quickbutton)
             return
-        elif user_message == '展覽資訊_東部':
+        elif user_message == '東部的展覽':
             quickbutton = TextSendMessage(
                 text='選擇您想查詢的東部城市：',
                 quick_reply=QuickReply(
@@ -214,7 +220,7 @@ def handle_message(event):
             )
             line_bot_api.reply_message(event.reply_token, quickbutton)
             return
-        elif user_message == '展覽資訊_南部':
+        elif user_message == '南部的展覽':
             quickbutton = TextSendMessage(
                 text='選擇您想查詢的南部城市：',
                 quick_reply=QuickReply(
@@ -244,23 +250,6 @@ def handle_message(event):
             line_bot_api.reply_message(
                 event.reply_token,
                 TextSendMessage(text="抱歉，我不太懂您的意思，可以試著問我其他問題喔！")
-            )
-            return
-        if user_message.startswith("展覽資訊_"):
-            city = user_message.split("_")[1]
-            exhibitions = get_exhibition_data()
-            if exhibitions:
-                filtered_exhibitions = filter_exhibitions(exhibitions, city)
-                if filtered_exhibitions:
-                    response = format_exhibition_info(filtered_exhibitions)
-                else:
-                    response = f"抱歉，目前沒有找到{city}的展覽資訊。請確保城市名稱正確，例如：臺北、臺中、高雄等。"
-            else:
-                response = "抱歉，無法獲取展覽資訊。請稍後再試。"
-
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text=response)
             )
             return
     elif event.source.type == 'group':
@@ -341,3 +330,15 @@ def handle_line_event(body, signature):
         handler.handle(body, signature)
     except InvalidSignatureError:
         raise ValueError("Invalid signature. Check your channel access token/channel secret.")
+
+def handle_exhibition_info(city):
+    exhibitions = get_exhibition_data()
+    if exhibitions:
+        filtered_exhibitions = filter_exhibitions(exhibitions, city)
+        if filtered_exhibitions:
+            response = format_exhibition_info(filtered_exhibitions)
+        else:
+            response = f"抱歉，目前沒有找到{city}的展覽資訊。請確保城市名稱正確，例如：臺北、臺中、高雄等。"
+    else:
+        response = "抱歉，無法獲取展覽資訊。請稍後再試。"
+    return response
