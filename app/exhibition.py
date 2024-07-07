@@ -27,7 +27,7 @@ def filter_exhibitions(exhibitions, city):
     
     return sorted(filtered, key=lambda x: (x['days_left'] is None, x['days_left'], x['days_to_start']))[:5]
 
-def format_exhibition_info(exhibitions):
+""" def format_exhibition_info(exhibitions):
     formatted_info_list = []
     for exhibition in exhibitions:
         formatted_info = "展覽資訊：\n\n"
@@ -51,3 +51,4 @@ def format_exhibition_info(exhibitions):
         formatted_info_list.append(formatted_info)
     
     return formatted_info_list
+ """
