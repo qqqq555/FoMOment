@@ -106,12 +106,8 @@ def handle_message(event):
             if exhibitions:
                 filtered_exhibitions = filter_exhibitions(exhibitions, city)
                 if filtered_exhibitions:
-                    for exhibition in filtered_exhibitions:
-                        title = exhibition['title']
-                        line_bot_api.reply_message(
-                            event.reply_token,
-                            TextSendMessage(text=title)
-                        )
+                    messages = [TextSendMessage(text=exhibition['title']) for exhibition in filtered_exhibitions]
+                    line_bot_api.reply_message(event.reply_token, messages)
                 else:
                     response = f"抱歉，目前沒有找到{city}的展覽資訊。請確保城市名稱正確，例如：臺北、臺中、高雄等。"
                     line_bot_api.reply_message(
