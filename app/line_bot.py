@@ -399,8 +399,8 @@ def handle_message(event):
                 )
             return
 
-        elif user_message == '拜託':
-            city = '臺北'  # 根據需求設置城市
+        elif user_message.startswith("展覽資訊_"):
+            city = user_message.split("_")[1]
             exhibitions = get_exhibition_data()
             if exhibitions:
                 filtered_exhibitions = filter_exhibitions(exhibitions, city)
@@ -414,7 +414,7 @@ def handle_message(event):
                         if not source_web_promote.strip():
                             source_web_promote = 'https://www.google.com'
                         column = CarouselColumn(
-                            thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png',   
+                            thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/A2CBDCA5-B489-422D-87A1-65BCB2F6CD8F.jpg',   
                             title=exhibition['title'][:35],
                             text=f"日期：{exhibition['startDate']}~{exhibition['endDate']}\n地點:{location_name}",
                             actions=[
@@ -444,77 +444,6 @@ def handle_message(event):
                     TextSendMessage(text=response)
                 )
             return
-
-        elif user_message == '拜託啦':
-            city = '臺北'  # 根據需求設置城市
-            exhibitions = get_exhibition_data()
-            if exhibitions:
-                filtered_exhibitions = filter_exhibitions(exhibitions, city)
-                if filtered_exhibitions:
-                    messages = [TextSendMessage(text=exhibition['endDate']) for exhibition in filtered_exhibitions]
-                    line_bot_api.reply_message(event.reply_token, messages)
-                else:
-                    response = f"抱歉，目前沒有找到{city}的展覽資訊。請確保城市名稱正確，例如：臺北、臺中、高雄等。"
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        TextSendMessage(text=response)
-                    )
-            else:
-                response = "抱歉，目前無法獲取展覽資訊。"
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(text=response)
-                )
-            return
-        elif user_message == '拜託啦啦啦':
-            city = '臺北'  # 根據需求設置城市
-            exhibitions = get_exhibition_data()
-            if exhibitions:
-                filtered_exhibitions = filter_exhibitions(exhibitions, city)
-                if filtered_exhibitions:
-                    messages = [TextSendMessage(text=exhibition['showInfo'][0]['locationName']) for exhibition in filtered_exhibitions]
-                    line_bot_api.reply_message(event.reply_token, messages)
-                else:
-                    response = f"抱歉，目前沒有找到{city}的展覽資訊。請確保城市名稱正確，例如：臺北、臺中、高雄等。"
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        TextSendMessage(text=response)
-                    )
-            else:
-                response = "抱歉，目前無法獲取展覽資訊。"
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(text=response)
-                )
-            return
-        elif user_message == '拜託啦啦':
-            city = '臺北'  # 根據需求設置城市
-            exhibitions = get_exhibition_data()
-            if exhibitions:
-                filtered_exhibitions = filter_exhibitions(exhibitions, city)
-                if filtered_exhibitions:
-                    messages = []
-                    for exhibition in filtered_exhibitions:
-                        source_web_promote = exhibition.get('sourceWebPromote', 'https://www.google.com')
-                        if not source_web_promote.strip():
-                            source_web_promote = 'https://www.google.com'
-                        messages.append(TextSendMessage(text=source_web_promote))
-                    line_bot_api.reply_message(event.reply_token, messages)
-                else:
-                    response = f"抱歉，目前沒有找到{city}的展覽資訊。請確保城市名稱正確，例如：臺北、臺中、高雄等。"
-                    line_bot_api.reply_message(
-                        event.reply_token,
-                        TextSendMessage(text=response)
-                    )
-                return
-            else:
-                response = "抱歉，目前無法獲取展覽資訊。"
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(text=response)
-                )
-            return
-
         
         # elif user_message.startswith("展覽資訊_"):
         #     city = user_message.split("_")[1]
