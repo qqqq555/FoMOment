@@ -112,24 +112,24 @@ def handle_message(event):
                     }
 
                     columns = []
-            column = CarouselColumn(
-                text=f"公司簡稱: {stock_data['公司簡稱']}\n"
-                     f"成交價: {stock_data['成交價']}\n"
-                     f"漲跌百分比: {stock_data['漲跌百分比']}\n"
-                     f"成交量: {stock_data['成交量']}\n"
-                     f"開盤價: {stock_data['開盤價']}\n"
-                     f"最高價: {stock_data['最高價']}\n"
-                     f"最低價: {stock_data['最低價']}\n"
-                     f"昨收價: {stock_data['昨收價']}\n"
-                     f"更新時間: {stock_data['更新時間']}\n",
-                actions=[
-                    URIAction(
-                        label='查看詳細資訊',
-                        uri=f'https://tw.search.yahoo.com/search?p={stock_code}&fr=finance&fr2=p%3Afinvsrp%2Cm%3Asb'
+                    column = CarouselColumn(
+                        text=f"公司簡稱: {stock_data['公司簡稱']}\n"
+                            f"成交價: {stock_data['成交價']}\n"
+                            f"漲跌百分比: {stock_data['漲跌百分比']}\n"
+                            f"成交量: {stock_data['成交量']}\n"
+                            f"開盤價: {stock_data['開盤價']}\n"
+                            f"最高價: {stock_data['最高價']}\n"
+                            f"最低價: {stock_data['最低價']}\n"
+                            f"昨收價: {stock_data['昨收價']}\n"
+                            f"更新時間: {stock_data['更新時間']}\n",
+                        actions=[
+                            URIAction(
+                                label='查看詳細資訊',
+                                uri=f'https://tw.search.yahoo.com/search?p={stock_code}&fr=finance&fr2=p%3Afinvsrp%2Cm%3Asb'
+                            )
+                        ]
                     )
-                ]
-            )
-            columns.append(column)
+                    columns.append(column)
 
                     carousel_template = CarouselTemplate(columns=columns)
                     template_message = TemplateSendMessage(
@@ -145,6 +145,7 @@ def handle_message(event):
                     TextSendMessage(text="抱歉，處理股票資訊時發生錯誤。")
                 )
             return
+
         elif user_message == '拜託':
             city = '臺北'  # 根據需求設置城市
             exhibitions = get_exhibition_data()
