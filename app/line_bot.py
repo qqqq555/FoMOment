@@ -4,7 +4,7 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, JoinEvent, LeaveEvent,
     TemplateSendMessage, MessageAction, CarouselColumn, CarouselTemplate, 
     URIAction, QuickReply, QuickReplyButton, PostbackAction, FlexSendMessage, BubbleContainer, BoxComponent, TextComponent,
-    ButtonComponent
+    ButtonComponent, FollowEvent
 )
 from app.firebase import (
     get_messages, clear_messages, add_message, get_summary_count, 
@@ -22,6 +22,25 @@ import json
 line_bot_api = LineBotApi(Config.LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(Config.LINE_CHANNEL_SECRET)
 user_states = {}
+
+@handler.add(FollowEvent)
+def handle_follow(event):
+    user_id = event.source.user_id
+    profile = line_bot_api.get_profile(user_id)
+    nickname = profile.display_name
+    account_name = "FoMOment"
+
+    welcome_message = (
+        f"{nickname}您好！ 我是{account_name} 感謝您加入好友～\n\n"
+        "「FoMOment，for the moment」\n"
+        "我們致力於幫助每個人擺脫 FoMO 的困擾，培養自我關愛，減少無謂比較，活在當下，FoMOment與你同在！\n\n"
+        "我可以幫助您的群組訊息做摘要，請點選下方選單查看詳細使用說明。"
+    )
+
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=welcome_message)
+    )
 
 @handler.add(JoinEvent)
 def handle_join(event):
@@ -651,6 +670,10 @@ def handle_message(event):
             line_bot_api.reply_message(event.reply_token, template_message)
             return
         elif user_message == "群組訊息摘要":
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text="以下是「群組訊息摘要」使用說明~\n\n若想讓我幫您的群組訊息做摘要，請先將我加入您想要進行摘要的群組！\n\n我預設每50則訊息會為您做一次摘要，但您可以在群組中使用下方列出的指令進行設定：\n\n· 輸入「設定摘要訊息數 [數字]」，更改每幾則訊息要做摘要的設定。例如輸入「設定摘要訊息數 5」，我將更改成每5則訊息為您做一次摘要。\n\n· 輸入「立即摘要」，我會立即為您摘要。\n\nP.S. 輸入文字即可，不需輸入「」喔！")
+            )
             return
         else:
             line_bot_api.reply_message(
