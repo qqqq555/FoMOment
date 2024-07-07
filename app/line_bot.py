@@ -357,17 +357,15 @@ def handle_message(event):
                     columns = []
                     for exhibition in filtered_exhibitions:
                         columns=CarouselColumn(
-                            
-                                thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png',  
+"""                                 thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png',   """
                                 title=exhibition['title'][:35],
-                                text=f"開始日期：{exhibition['startDate']}\n結束日期：{exhibition['endDate']}",
+                                text=f"開始日期：{exhibition['title'][:35]}\n結束日期：{exhibition['title'][:35]}",
                                 actions=[
-                                    URITemplateAction(
+                                    URIAction(
                                         label='查看詳情',
-                                        uri=exhibition['sourceWebPromote']
+                                        uri='https://www.google.com'
                                     )
                                 ]
-                            
                         )
                         columns.append(column)
                     carousel_template = CarouselTemplate(columns=columns)
@@ -452,7 +450,7 @@ def handle_message(event):
                 quick_reply=QuickReply(
                     items=[
                         QuickReplyButton(
-                            action=MessageAction('label=臺北', text='展覽資訊_臺北'),
+                            action=MessageAction(label='臺北', text='展覽資訊_臺北'),
                             image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png'
                         ),
                         QuickReplyButton(
