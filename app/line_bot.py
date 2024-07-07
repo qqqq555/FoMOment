@@ -96,17 +96,40 @@ def handle_message(event):
                         TextSendMessage(text="抱歉，無法獲取股票資訊，請稍後再試。")
                     )
                 else:
+                    # Parse stock information
+                    lines = stock_info.strip().split('\n')
+                    stock_data = {
+                        '股票代號': lines[0].split(': ')[1],
+                        '公司簡稱': lines[1].split(': ')[1],
+                        '成交價': lines[2].split(': ')[1],
+                        '漲跌百分比': lines[3].split(': ')[1],
+                        '成交量': lines[4].split(': ')[1],
+                        '開盤價': lines[5].split(': ')[1],
+                        '最高價': lines[6].split(': ')[1],
+                        '最低價': lines[7].split(': ')[1],
+                        '昨收價': lines[8].split(': ')[1],
+                        '更新時間': lines[9].split(': ')[1]
+                    }
+
                     columns = []
-                    column = CarouselColumn(
-                        text=stock_info.split('\n')[1],  # Display the company name as the main text
-                        actions=[
-                            URIAction(
-                                label='查看詳細資訊',
-                                uri=f'https://tw.search.yahoo.com/search?p={stock_code}&fr=finance&fr2=p%3Afinvsrp%2Cm%3Asb'
-                            )
-                        ]
+            column = CarouselColumn(
+                text=f"公司簡稱: {stock_data['公司簡稱']}\n"
+                     f"成交價: {stock_data['成交價']}\n"
+                     f"漲跌百分比: {stock_data['漲跌百分比']}\n"
+                     f"成交量: {stock_data['成交量']}\n"
+                     f"開盤價: {stock_data['開盤價']}\n"
+                     f"最高價: {stock_data['最高價']}\n"
+                     f"最低價: {stock_data['最低價']}\n"
+                     f"昨收價: {stock_data['昨收價']}\n"
+                     f"更新時間: {stock_data['更新時間']}\n",
+                actions=[
+                    URIAction(
+                        label='查看詳細資訊',
+                        uri=f'https://tw.search.yahoo.com/search?p={stock_code}&fr=finance&fr2=p%3Afinvsrp%2Cm%3Asb'
                     )
-                    columns.append(column)
+                ]
+            )
+            columns.append(column)
 
                     carousel_template = CarouselTemplate(columns=columns)
                     template_message = TemplateSendMessage(
