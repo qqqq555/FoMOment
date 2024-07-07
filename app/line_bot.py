@@ -4,7 +4,7 @@ from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, JoinEvent, LeaveEvent,
     TemplateSendMessage, MessageAction, CarouselColumn, CarouselTemplate, 
     URIAction, QuickReply, QuickReplyButton, PostbackAction, FlexSendMessage, BubbleContainer, BoxComponent, TextComponent,
-    ButtonComponent
+    ButtonComponent, FollowEvent
 )
 from app.firebase import (
     get_messages, clear_messages, add_message, get_summary_count, 
@@ -12,7 +12,7 @@ from app.firebase import (
 )
 from app.gemini import summarize_with_gemini, talk_to_gemini
 from app.config import Config
-from app.exhibition import get_exhibition_data, filter_exhibitions, format_exhibition_info
+from app.exhibition import get_exhibition_data, filter_exhibitions
 from app.stock import get_stock_info
 from app.fortune import get_daily_fortune, create_fortune_flex_message
 from app.news import get_news_carousel
@@ -22,6 +22,25 @@ import json
 line_bot_api = LineBotApi(Config.LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(Config.LINE_CHANNEL_SECRET)
 user_states = {}
+
+@handler.add(FollowEvent)
+def handle_follow(event):
+    user_id = event.source.user_id
+    profile = line_bot_api.get_profile(user_id)
+    nickname = profile.display_name
+    account_name = "FoMOment"
+
+    welcome_message = (
+        f"{nickname}您好！ 我是{account_name} 感謝您加入好友～\n\n"
+        "「FoMOment，for the moment」\n"
+        "我們致力於幫助每個人擺脫 FoMO 的困擾，培養自我關愛，減少無謂比較，活在當下，FoMOment與你同在！\n\n"
+        "我可以幫助您的群組訊息做摘要，請點選下方選單查看詳細使用說明。"
+    )
+
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=welcome_message)
+    )
 
 @handler.add(JoinEvent)
 def handle_join(event):
@@ -88,8 +107,8 @@ def handle_message(event):
                     event.reply_token,
                     TextSendMessage(text="請利用以下格式進行查詢：股票_股票代號，例如：股票_2330")
                 )
-        elif user_message.startswith("股票-"):
-            stock_code = user_message.split("-")[1]
+        elif user_message.startswith("股票_"):
+            stock_code = user_message.split("_")[1]
             try:
                 stock_info = get_stock_info(stock_code)
                 if stock_info.startswith("Error"):
@@ -110,7 +129,6 @@ def handle_message(event):
                         '最高價': lines[6].split(': ')[1],
                         '最低價': lines[7].split(': ')[1],
                         '昨收價': lines[8].split(': ')[1],
-                        '更新時間': lines[9].split(': ')[1]
                     }
 
                     # Create a bubble container
@@ -285,28 +303,6 @@ def handle_message(event):
                                                     "flex": 5
                                                 }
                                             ]
-                                        },
-                                        {
-                                            "type": "box",
-                                            "layout": "baseline",
-                                            "spacing": "sm",
-                                            "contents": [
-                                                {
-                                                    "type": "text",
-                                                    "text": "更新時間",
-                                                    "color": "#aaaaaa",
-                                                    "size": "sm",
-                                                    "flex": 1
-                                                },
-                                                {
-                                                    "type": "text",
-                                                    "text": stock_data['更新時間'],
-                                                    "wrap": True,
-                                                    "color": "#666666",
-                                                    "size": "sm",
-                                                    "flex": 5
-                                                }
-                                            ]
                                         }
                                     ]
                                 }
@@ -343,8 +339,8 @@ def handle_message(event):
                     TextSendMessage(text="抱歉，處理股票資訊時發生錯誤。")
                 )
             return
-        elif user_message.startswith("股票_"):
-            stock_code = user_message.split("_")[1]
+        elif user_message.startswith("股票-"):
+            stock_code = user_message.split("-")[1]
             try:
                 stock_info = get_stock_info(stock_code)
                 if stock_info.startswith("Error"):
@@ -491,11 +487,11 @@ elif user_message == '拜託啦啦':
     return
 
         
-        elif user_message.startswith("展覽資訊_"):
-            city = user_message.split("_")[1]
-            response = handle_exhibition_info(city)
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text=response))
-            return
+        # elif user_message.startswith("展覽資訊_"):
+        #     city = user_message.split("_")[1]
+        #     response = handle_exhibition_info(city)
+        #     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=response))
+        #     return
         elif user_message == '查詢展覽':
             quickbutton = TextSendMessage(
                 text='選擇您想查詢的區域：',
@@ -657,6 +653,10 @@ elif user_message == '拜託啦啦':
             line_bot_api.reply_message(event.reply_token, template_message)
             return
         elif user_message == "群組訊息摘要":
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text="以下是「群組訊息摘要」使用說明~\n\n若想讓我幫您的群組訊息做摘要，請先將我加入您想要進行摘要的群組！\n\n我預設每50則訊息會為您做一次摘要，但您可以在群組中使用下方列出的指令進行設定：\n\n· 輸入「設定摘要訊息數 [數字]」，更改每幾則訊息要做摘要的設定。例如輸入「設定摘要訊息數 5」，我將更改成每5則訊息為您做一次摘要。\n\n· 輸入「立即摘要」，我會立即為您摘要。\n\nP.S. 輸入文字即可，不需輸入「」喔！")
+            )
             return
         else:
             line_bot_api.reply_message(
@@ -742,15 +742,3 @@ def handle_line_event(body, signature):
         handler.handle(body, signature)
     except InvalidSignatureError:
         raise ValueError("Invalid signature. Check your channel access token/channel secret.")
-
-def handle_exhibition_info(city):
-    exhibitions = get_exhibition_data()
-    if exhibitions:
-        filtered_exhibitions = filter_exhibitions(exhibitions, city)
-        if filtered_exhibitions:
-            response = format_exhibition_info(filtered_exhibitions)
-        else:
-            response = f"抱歉，目前沒有找到{city}的展覽資訊。請確保城市名稱正確，例如：臺北、臺中、高雄等。"
-    else:
-        response = "抱歉，無法獲取展覽資訊。請稍後再試。"
-    return response
