@@ -101,7 +101,7 @@ def handle_message(event):
                 )
             return
         elif user_message == '拜託':
-            city = '台北'  # 根據需求設置城市
+            city = '臺北'  # 根據需求設置城市
             exhibitions = get_exhibition_data()
             if exhibitions:
                 filtered_exhibitions = filter_exhibitions(exhibitions, city)
