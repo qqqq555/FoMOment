@@ -107,8 +107,8 @@ def handle_message(event):
                     event.reply_token,
                     TextSendMessage(text="請利用以下格式進行查詢：股票_股票代號，例如：股票_2330")
                 )
-        elif user_message.startswith("股票-"):
-            stock_code = user_message.split("-")[1]
+        elif user_message.startswith("股票_"):
+            stock_code = user_message.split("_")[1]
             try:
                 stock_info = get_stock_info(stock_code)
                 if stock_info.startswith("Error"):
@@ -129,7 +129,6 @@ def handle_message(event):
                         '最高價': lines[6].split(': ')[1],
                         '最低價': lines[7].split(': ')[1],
                         '昨收價': lines[8].split(': ')[1],
-                        '更新時間': lines[9].split(': ')[1]
                     }
 
                     # Create a bubble container
@@ -304,28 +303,6 @@ def handle_message(event):
                                                     "flex": 5
                                                 }
                                             ]
-                                        },
-                                        {
-                                            "type": "box",
-                                            "layout": "baseline",
-                                            "spacing": "sm",
-                                            "contents": [
-                                                {
-                                                    "type": "text",
-                                                    "text": "更新時間",
-                                                    "color": "#aaaaaa",
-                                                    "size": "sm",
-                                                    "flex": 1
-                                                },
-                                                {
-                                                    "type": "text",
-                                                    "text": stock_data['更新時間'],
-                                                    "wrap": True,
-                                                    "color": "#666666",
-                                                    "size": "sm",
-                                                    "flex": 5
-                                                }
-                                            ]
                                         }
                                     ]
                                 }
@@ -362,8 +339,8 @@ def handle_message(event):
                     TextSendMessage(text="抱歉，處理股票資訊時發生錯誤。")
                 )
             return
-        elif user_message.startswith("股票_"):
-            stock_code = user_message.split("_")[1]
+        elif user_message.startswith("股票-"):
+            stock_code = user_message.split("-")[1]
             try:
                 stock_info = get_stock_info(stock_code)
                 if stock_info.startswith("Error"):
