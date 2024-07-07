@@ -283,7 +283,8 @@ def handle_message(event):
             
             line_bot_api.reply_message(event.reply_token, template_message)
             return
-
+        elif user_message == "群組訊息摘要":
+            return
         else:
             line_bot_api.reply_message(
                 event.reply_token,
