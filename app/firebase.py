@@ -1,7 +1,7 @@
 import firebase_admin
 from firebase_admin import db
 from app.config import Config
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 firebase_admin.initialize_app(options={
     'databaseURL': Config.FIREBASE_URL
@@ -43,7 +43,8 @@ def delete_group_data(group_id):
     group_ref.delete()
 
 def check_fortune_usage(user_id):
-    today = datetime.now().strftime("%Y-%m-%d")
+    tw_tz = timezone(timedelta(hours=8))
+    today = datetime.now(tw_tz).strftime("%Y-%m-%d")
     user_ref = db.reference(f'users/{user_id}/fortune_usage')
     last_usage = user_ref.get()
     if last_usage == today:
