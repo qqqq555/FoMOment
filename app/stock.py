@@ -1,4 +1,99 @@
 import requests
+import pandas as pd
+import io
+
+def get_stock_info(stock_code):
+    # Fetch all stock data from STOCK_DAY_ALL
+    url_day_all = 'https://www.twse.com.tw/exchangeReport/STOCK_DAY_ALL?response=open_data'
+    response_day_all = requests.get(url_day_all)
+    
+    if response_day_all.status_code != 200:
+        return f"Error: Unable to fetch data (Status Code: {response_day_all.status_code})"
+    
+    # Load data into a DataFrame
+    data_day_all = response_day_all.text
+    df_day_all = pd.read_csv(io.StringIO(data_day_all))
+    
+    # Filter the DataFrame for the specific stock code
+    stock_data = df_day_all[df_day_all['證券代號'] == stock_code]
+    
+    if stock_data.empty:
+        return "找不到該股票資訊。"
+    
+    # Get the most recent stock data
+    stock_data = stock_data.iloc[-1]
+    
+    # Extract necessary information from STOCK_DAY_ALL
+    columns = ['證券代號', '證券名稱', '收盤價', '成交股數', '開盤價', '最高價', '最低價']
+    stock_data = stock_data[columns]
+    
+    # Fetch additional information from TWT84U
+    url_twt84u = f'https://openapi.twse.com.tw/v1/exchangeReport/TWT84U?stockNo={stock_code}'
+    response_twt84u = requests.get(url_twt84u)
+    
+    if response_twt84u.status_code != 200:
+        return f"Error: Unable to fetch additional data (Status Code: {response_twt84u.status_code})"
+    
+    data_twt84u = response_twt84u.json()
+    
+    if not data_twt84u:
+        return "找不到該股票的額外資訊。"
+    
+    # Find the correct record in the TWT84U data
+    additional_data = None
+    for record in data_twt84u:
+        if record.get('Code') == stock_code:
+            additional_data = record
+            break
+    
+    if additional_data is None:
+        return "找不到該股票的額外資訊。"
+    
+    # Calculate 漲跌百分比
+    previous_day_price = additional_data.get('PreviousDayPrice')
+    current_price = stock_data['收盤價']
+    
+    if previous_day_price and current_price:
+        try:
+            previous_day_price = float(previous_day_price)
+            current_price = float(current_price)
+            percent_change = (current_price - previous_day_price) / previous_day_price * 100
+        except ValueError:
+            percent_change = None
+    else:
+        percent_change = None
+    
+    # Format the stock information
+    info = f"股票代號: {stock_data['證券代號']}\n"
+    info += f"公司簡稱: {stock_data['證券名稱']}\n"
+    info += f"成交價: {stock_data['收盤價']}\n"
+    if percent_change is not None:
+        info += f"漲跌百分比: {percent_change:.2f}%\n"
+    else:
+        info += f"漲跌百分比: N/A\n"
+    info += f"成交量: {stock_data['成交股數']}\n"
+    info += f"開盤價: {stock_data['開盤價']}\n"
+    info += f"最高價: {stock_data['最高價']}\n"
+    info += f"最低價: {stock_data['最低價']}\n"
+    
+    # Add additional information from TWT84U
+    info += f"本日漲停價: {additional_data.get('TodayLimitUp', 'N/A')}\n"
+    info += f"本日開盤競價基準: {additional_data.get('TodayOpeningRefPrice', 'N/A')}\n"
+    info += f"本日跌停價: {additional_data.get('TodayLimitDown', 'N/A')}\n"
+    info += f"前日開盤競價基準: {additional_data.get('PreviousDayOpeningRefPrice', 'N/A')}\n"
+    info += f"前日收盤價: {additional_data.get('PreviousDayPrice', 'N/A')}\n"
+    info += f"前日買進揭示價: {additional_data.get('PreviousDayLimitUp', 'N/A')}\n"
+    info += f"前日賣出揭示價: {additional_data.get('PreviousDayLimitDown', 'N/A')}\n"
+    info += f"最近成交日: {additional_data.get('LastTradingDay', 'N/A')}\n"
+    
+    return info
+
+# Example usage:
+stock_code = '0050'
+print(get_stock_info(stock_code))
+
+'''
+import requests
 import json
 import pandas as pd
 import datetime
@@ -54,7 +149,7 @@ def get_stock_info(stock_code):
     return info
 
 print(get_stock_info('2330'))
-
+'''
 
 '''
 import twstock
