@@ -407,14 +407,20 @@ def handle_message(event):
                 if filtered_exhibitions:
                     columns = []
                     for exhibition in filtered_exhibitions:
+                        # 確保 showInfo 和 locationName 存在
+                        location_name = exhibition['showInfo'][0]['locationName'][:20] if exhibition['showInfo'] and 'locationName' in exhibition['showInfo'][0] else '暫無'
+                        # 處理 sourceWebPromote 可能為空的情況
+                        source_web_promote = exhibition.get('sourceWebPromote', 'https://www.google.com')
+                        if not source_web_promote.strip():
+                            source_web_promote = 'https://www.google.com'
                         column = CarouselColumn(
                             thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png',   
                             title=exhibition['title'][:35],
-                            text=f"日期：{exhibition['startDate']}~{exhibition['endDate']}\n地點:{exhibition['showInfo'][0]['locationName'][:20]}",
+                            text=f"日期：{exhibition['startDate']}~{exhibition['endDate']}\n地點:{location_name}",
                             actions=[
                                 URIAction(
                                     label='點擊查看',
-                                    uri=exhibition['sourceWebPromote']
+                                    uri=source_web_promote
                                 )
                             ]
                         )
@@ -438,6 +444,7 @@ def handle_message(event):
                     TextSendMessage(text=response)
                 )
             return
+
         elif user_message == '拜託啦':
             city = '臺北'  # 根據需求設置城市
             exhibitions = get_exhibition_data()
