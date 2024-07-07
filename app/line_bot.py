@@ -90,10 +90,32 @@ def handle_message(event):
             stock_code = user_message.split("_")[1]
             try:
                 stock_info = get_stock_info(stock_code)
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(text=stock_info)
-                )
+                if stock_info.startswith("Error"):
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage(text="抱歉，無法獲取股票資訊，請稍後再試。")
+                    )
+                else:
+                    columns = []
+                    column = CarouselColumn(
+                        text=stock_info.split('\n')[1],  # Display the company name as the main text
+                        actions=[
+                            URIAction(
+                                label='查看詳細資訊',
+                                uri=f'https://tw.search.yahoo.com/search?p={stock_code}&fr=finance&fr2=p%3Afinvsrp%2Cm%3Asb'
+                            )
+                        ]
+                    )
+                    columns.append(column)
+
+                    carousel_template = CarouselTemplate(columns=columns)
+                    template_message = TemplateSendMessage(
+                        alt_text='股票資訊',
+                        template=carousel_template
+                    )
+
+                    line_bot_api.reply_message(event.reply_token, template_message)
+
             except Exception as e:
                 line_bot_api.reply_message(
                     event.reply_token,
@@ -404,3 +426,20 @@ def handle_exhibition_info(city):
     else:
         response = "抱歉，無法獲取展覽資訊。請稍後再試。"
     return response
+
+
+'''elif user_message.startswith("股票_"):
+            stock_code = user_message.split("_")[1]
+            try:
+                stock_info = get_stock_info(stock_code)
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text=stock_info)
+                )
+            except Exception as e:
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text="抱歉，處理股票資訊時發生錯誤。")
+                )
+            return 
+            '''
