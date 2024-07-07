@@ -89,7 +89,7 @@ def get_stock_info(stock_code):
     return info
 
 # Example usage:
-stock_code = '0050'
+stock_code = '0056'
 print(get_stock_info(stock_code))
 
 '''
