@@ -128,7 +128,7 @@ def handle_message(event):
                         '開盤價': lines[5].split(': ')[1],
                         '最高價': lines[6].split(': ')[1],
                         '最低價': lines[7].split(': ')[1],
-                        '昨收價': lines[8].split(': ')[1],
+                        '昨收價': lines[12].split(': ')[1],
                     }
 
                     # Create a bubble container
