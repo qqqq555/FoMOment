@@ -88,6 +88,261 @@ def handle_message(event):
                     event.reply_token,
                     TextSendMessage(text="請利用以下格式進行查詢：股票_股票代號，例如：股票_2330")
                 )
+        elif user_message.startswith("股票-"):
+            stock_code = user_message.split("-")[1]
+            try:
+                stock_info = get_stock_info(stock_code)
+                if stock_info.startswith("Error"):
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage(text="抱歉，無法獲取股票資訊，請稍後再試。")
+                    )
+                else:
+                    # Parse stock information
+                    lines = stock_info.strip().split('\n')
+                    stock_data = {
+                        '股票代號': lines[0].split(': ')[1],
+                        '公司簡稱': lines[1].split(': ')[1],
+                        '成交價': lines[2].split(': ')[1],
+                        '漲跌百分比': lines[3].split(': ')[1],
+                        '成交量': lines[4].split(': ')[1],
+                        '開盤價': lines[5].split(': ')[1],
+                        '最高價': lines[6].split(': ')[1],
+                        '最低價': lines[7].split(': ')[1],
+                        '昨收價': lines[8].split(': ')[1],
+                        '更新時間': lines[9].split(': ')[1]
+                    }
+
+                    # Create a bubble container
+                    bubble = {
+                        "type": "bubble",
+                        "body": {
+                            "type": "box",
+                            "layout": "vertical",
+                            "contents": [
+                                {
+                                    "type": "text",
+                                    "text": stock_data['公司簡稱'],
+                                    "weight": "bold",
+                                    "size": "xl"
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "vertical",
+                                    "margin": "lg",
+                                    "spacing": "sm",
+                                    "contents": [
+                                        {
+                                            "type": "box",
+                                            "layout": "baseline",
+                                            "spacing": "sm",
+                                            "contents": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "成交價",
+                                                    "color": "#aaaaaa",
+                                                    "size": "sm",
+                                                    "flex": 1
+                                                },
+                                                {
+                                                    "type": "text",
+                                                    "text": stock_data['成交價'],
+                                                    "wrap": True,
+                                                    "color": "#666666",
+                                                    "size": "sm",
+                                                    "flex": 5
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "box",
+                                            "layout": "baseline",
+                                            "spacing": "sm",
+                                            "contents": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "漲跌百分比",
+                                                    "color": "#aaaaaa",
+                                                    "size": "sm",
+                                                    "flex": 1
+                                                },
+                                                {
+                                                    "type": "text",
+                                                    "text": stock_data['漲跌百分比'],
+                                                    "wrap": True,
+                                                    "color": "#666666",
+                                                    "size": "sm",
+                                                    "flex": 5
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "box",
+                                            "layout": "baseline",
+                                            "spacing": "sm",
+                                            "contents": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "成交量",
+                                                    "color": "#aaaaaa",
+                                                    "size": "sm",
+                                                    "flex": 1
+                                                },
+                                                {
+                                                    "type": "text",
+                                                    "text": stock_data['成交量'],
+                                                    "wrap": True,
+                                                    "color": "#666666",
+                                                    "size": "sm",
+                                                    "flex": 5
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "box",
+                                            "layout": "baseline",
+                                            "spacing": "sm",
+                                            "contents": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "開盤價",
+                                                    "color": "#aaaaaa",
+                                                    "size": "sm",
+                                                    "flex": 1
+                                                },
+                                                {
+                                                    "type": "text",
+                                                    "text": stock_data['開盤價'],
+                                                    "wrap": True,
+                                                    "color": "#666666",
+                                                    "size": "sm",
+                                                    "flex": 5
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "box",
+                                            "layout": "baseline",
+                                            "spacing": "sm",
+                                            "contents": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "最高價",
+                                                    "color": "#aaaaaa",
+                                                    "size": "sm",
+                                                    "flex": 1
+                                                },
+                                                {
+                                                    "type": "text",
+                                                    "text": stock_data['最高價'],
+                                                    "wrap": True,
+                                                    "color": "#666666",
+                                                    "size": "sm",
+                                                    "flex": 5
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "box",
+                                            "layout": "baseline",
+                                            "spacing": "sm",
+                                            "contents": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "最低價",
+                                                    "color": "#aaaaaa",
+                                                    "size": "sm",
+                                                    "flex": 1
+                                                },
+                                                {
+                                                    "type": "text",
+                                                    "text": stock_data['最低價'],
+                                                    "wrap": True,
+                                                    "color": "#666666",
+                                                    "size": "sm",
+                                                    "flex": 5
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "box",
+                                            "layout": "baseline",
+                                            "spacing": "sm",
+                                            "contents": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "昨收價",
+                                                    "color": "#aaaaaa",
+                                                    "size": "sm",
+                                                    "flex": 1
+                                                },
+                                                {
+                                                    "type": "text",
+                                                    "text": stock_data['昨收價'],
+                                                    "wrap": True,
+                                                    "color": "#666666",
+                                                    "size": "sm",
+                                                    "flex": 5
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "box",
+                                            "layout": "baseline",
+                                            "spacing": "sm",
+                                            "contents": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "更新時間",
+                                                    "color": "#aaaaaa",
+                                                    "size": "sm",
+                                                    "flex": 1
+                                                },
+                                                {
+                                                    "type": "text",
+                                                    "text": stock_data['更新時間'],
+                                                    "wrap": True,
+                                                    "color": "#666666",
+                                                    "size": "sm",
+                                                    "flex": 5
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "footer": {
+                            "type": "box",
+                            "layout": "vertical",
+                            "spacing": "sm",
+                            "contents": [
+                                {
+                                    "type": "button",
+                                    "style": "link",
+                                    "height": "sm",
+                                    "action": {
+                                        "type": "uri",
+                                        "label": "查看詳細資訊",
+                                        "uri": f"https://tw.search.yahoo.com/search?p={stock_code}&fr=finance&fr2=p%3Afinvsrp%2Cm%3Asb"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+
+                    # Send bubble message
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        FlexSendMessage(alt_text='股票資訊', contents=bubble)
+                    )
+
+            except Exception as e:
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text="抱歉，處理股票資訊時發生錯誤。")
+                )
+            return
         elif user_message.startswith("股票_"):
             stock_code = user_message.split("_")[1]
             try:
