@@ -410,7 +410,13 @@ def handle_message(event):
                         column = CarouselColumn(
                             thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png',   
                             title=exhibition['title'][:35],
-                            text=f"日期：{exhibition['startDate']}~{exhibition['endDate']}\n地點:{exhibition['showInfo'][0]['locationName'][:20]}"
+                            text=f"日期：{exhibition['startDate']}~{exhibition['endDate']}\n地點:{exhibition['showInfo'][0]['locationName'][:20]}",
+                            actions=[
+                                URIAction(
+                                    label='點擊查看',
+                                    uri=item['url']
+                                )
+                            ]
                         )
                         columns.append(column)
                     carousel_template = CarouselTemplate(columns=columns)
@@ -482,9 +488,9 @@ def handle_message(event):
                 if filtered_exhibitions:
                     messages = []
                     for exhibition in filtered_exhibitions:
-                        source_web_promote = exhibition.get('sourceWebPromote', '暫無')
+                        source_web_promote = exhibition.get('sourceWebPromote', 'https://www.google.com')
                         if not source_web_promote.strip():
-                            source_web_promote = '暫無'
+                            source_web_promote = 'https://www.google.com'
                         messages.append(TextSendMessage(text=source_web_promote))
                     line_bot_api.reply_message(event.reply_token, messages)
                 else:
