@@ -410,7 +410,7 @@ def handle_message(event):
                         column = CarouselColumn(
                             thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png',   
                             title=exhibition['title'][:35],
-                            text=f"日期：{exhibition['startDate']}~{exhibition['endDate']}\n地點:{exhibition['showInfo'][0]['locationName'][:20]}",
+                            text=f"日期：{exhibition['startDate']}~{exhibition['endDate']}\n地點:{exhibition['showInfo'][0]['locationName'][:20]}"
                         )
                         columns.append(column)
                     carousel_template = CarouselTemplate(columns=columns)
