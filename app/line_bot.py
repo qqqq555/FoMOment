@@ -149,7 +149,7 @@ def handle_message(event):
                         columns.append(
                             CarouselColumn(
                                 thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png',  # 替換成你想展示的圖片URL
-                                title=exhibition['title'],
+                                title=exhibition['title'][:35],
                                 text=f"開始日期：{exhibition['startDate']}\n結束日期：{exhibition['endDate']}",
                                 actions=[
                                     URITemplateAction(
