@@ -414,7 +414,7 @@ def handle_message(event):
                             actions=[
                                 URIAction(
                                     label='點擊查看',
-                                    uri=item['url']
+                                    uri=exhibition['sourceWebPromote']
                                 )
                             ]
                         )
