@@ -128,17 +128,40 @@ def handle_message(event):
             if exhibitions:
                 filtered_exhibitions = filter_exhibitions(exhibitions, city)
                 if filtered_exhibitions:
-                    titles = [exhibition['title'] for exhibition in filtered_exhibitions]
-                    response = "\n".join(titles)
+                    columns = []
+                    for exhibition in filtered_exhibitions:
+                        columns.append(
+                            CarouselColumn(
+                                thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png',  # 替換成你想展示的圖片URL
+                                title=exhibition['title'],
+                                text=f"開始日期：{exhibition['startDate']}\n結束日期：{exhibition['endDate']}",
+                                actions=[
+                                    URITemplateAction(
+                                        label='查看詳情',
+                                        uri=exhibition['sourceWebPromote']
+                                    )
+                                ]
+                            )
+                        )
+                    
+                    carousel_template = CarouselTemplate(columns=columns)
+                    template_message = TemplateSendMessage(
+                        alt_text='展覽資訊',
+                        template=carousel_template
+                    )
+                    line_bot_api.reply_message(event.reply_token, template_message)
                 else:
                     response = f"抱歉，目前沒有找到{city}的展覽資訊。請確保城市名稱正確，例如：臺北、臺中、高雄等。"
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage(text=response)
+                    )
             else:
                 response = "抱歉，目前無法獲取展覽資訊。"
-
-            line_bot_api.reply_message(
-                event.reply_token,
-                TextSendMessage(text=response)
-            )
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text=response)
+                )
             return
         elif user_message.startswith("展覽資訊_"):
             city = user_message.split("_")[1]
