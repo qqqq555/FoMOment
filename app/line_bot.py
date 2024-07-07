@@ -3,7 +3,8 @@ from linebot.exceptions import InvalidSignatureError
 from linebot.models import (
     MessageEvent, TextMessage, TextSendMessage, JoinEvent, LeaveEvent,
     TemplateSendMessage, MessageAction, CarouselColumn, CarouselTemplate, 
-    URIAction, QuickReply, QuickReplyButton, PostbackAction
+    URIAction, QuickReply, QuickReplyButton, PostbackAction, FlexSendMessage, BubbleContainer, BoxComponent, TextComponent,
+    ButtonComponent
 )
 from app.firebase import (
     get_messages, clear_messages, add_message, get_summary_count, 
@@ -16,6 +17,7 @@ from app.stock import get_stock_info
 from app.fortune import get_daily_fortune, create_fortune_flex_message
 from app.news import get_news_carousel
 import threading
+import json
 
 line_bot_api = LineBotApi(Config.LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(Config.LINE_CHANNEL_SECRET)
