@@ -111,39 +111,41 @@ def handle_message(event):
                         '最低價': lines[7].split(': ')[1],
                         '昨收價': lines[8].split(': ')[1],
                         '更新時間': lines[9].split(': ')[1]
-                     }
+                    }
 
                     columns = []
                     column = CarouselColumn(
-                         text=f"公司簡稱: {stock_data['公司簡稱']}\n"
-                             f"成交價: {stock_data['成交價']}\n"
-                             f"漲跌百分比: {stock_data['漲跌百分比']}\n"
-                             f"成交量: {stock_data['成交量']}\n"
-                             f"開盤價: {stock_data['開盤價']}\n"
-                             f"最高價: {stock_data['最高價']}\n"
-                             f"最低價: {stock_data['最低價']}\n"
-                             f"昨收價: {stock_data['昨收價']}\n"
-                             f"更新時間: {stock_data['更新時間']}\n",
-                         actions=[
-                             URIAction(
-                                 label='查看詳細資訊',
-                                 uri=f'https://tw.search.yahoo.com/search?p={stock_code}&fr=finance&fr2=p%3Afinvsrp%2Cm%3Asb'
-                             )
-                         ]
-                     )
+                        text=f"公司簡稱: {stock_data['公司簡稱']}\n"
+                            f"成交價: {stock_data['成交價']}\n"
+                            f"漲跌百分比: {stock_data['漲跌百分比']}\n"
+                            f"成交量: {stock_data['成交量']}\n"
+                            f"開盤價: {stock_data['開盤價']}\n"
+                            f"最高價: {stock_data['最高價']}\n"
+                            f"最低價: {stock_data['最低價']}\n"
+                            f"昨收價: {stock_data['昨收價']}\n"
+                            f"更新時間: {stock_data['更新時間']}\n",
+                        actions=[
+                            URIAction(
+                                label='查看詳細資訊',
+                                uri=f'https://tw.search.yahoo.com/search?p={stock_code}&fr=finance&fr2=p%3Afinvsrp%2Cm%3Asb'
+                            )
+                        ]
+                    )
                     columns.append(column)
-                    
+
                     carousel_template = CarouselTemplate(columns=columns)
                     template_message = TemplateSendMessage(
                         alt_text='股票資訊',
                         template=carousel_template
                     )
+
                     line_bot_api.reply_message(event.reply_token, template_message)
+
             except Exception as e:
                 line_bot_api.reply_message(
                     event.reply_token,
-                     TextSendMessage(text="抱歉，處理股票資訊時發生錯誤。")
-                 )
+                    TextSendMessage(text="抱歉，處理股票資訊時發生錯誤。")
+                )
             return
 
         elif user_message == '拜託':
@@ -154,16 +156,16 @@ def handle_message(event):
                 if filtered_exhibitions:
                     columns = []
                     for exhibition in filtered_exhibitions:
-                        column=CarouselColumn(
-"""                                 thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png',   """
-                                title=exhibition['title'][:35],
-                                text=f"開始日期：{exhibition['title'][:35]}\n結束日期：{exhibition['title'][:35]}",
-                                actions=[
-                                    URIAction(
-                                        label='查看詳情',
-                                        uri='https://www.google.com'
-                                    )
-                                ]
+                        column = CarouselColumn(
+                            thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png',   
+                            title=exhibition['title'][:35],
+                            text=f"開始日期：{exhibition['startDate']}\n結束日期：{exhibition['endDate']}",
+                            actions=[
+                                URIAction(
+                                    label='查看詳情',
+                                    uri=exhibition['sourceWebPromote']
+                                )
+                            ]
                         )
                         columns.append(column)
                     carousel_template = CarouselTemplate(columns=columns)
@@ -491,20 +493,3 @@ def handle_exhibition_info(city):
     else:
         response = "抱歉，無法獲取展覽資訊。請稍後再試。"
     return response
-
-
-'''elif user_message.startswith("股票_"):
-            stock_code = user_message.split("_")[1]
-            try:
-                stock_info = get_stock_info(stock_code)
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(text=stock_info)
-                )
-            except Exception as e:
-                line_bot_api.reply_message(
-                    event.reply_token,
-                    TextSendMessage(text="抱歉，處理股票資訊時發生錯誤。")
-                )
-            return 
-            '''
