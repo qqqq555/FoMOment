@@ -130,9 +130,9 @@ def handle_message(event):
                 if filtered_exhibitions:
                     columns = []
                     for exhibition in filtered_exhibitions:
-                        columns.append(
-                            CarouselColumn(
-                                thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png',  # 替換成你想展示的圖片URL
+                        columns=CarouselColumn(
+                            
+                                thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png',  
                                 title=exhibition['title'][:35],
                                 text=f"開始日期：{exhibition['startDate']}\n結束日期：{exhibition['endDate']}",
                                 actions=[
@@ -141,9 +141,9 @@ def handle_message(event):
                                         uri=exhibition['sourceWebPromote']
                                     )
                                 ]
-                            )
+                            
                         )
-                    
+                        columns.append(column)
                     carousel_template = CarouselTemplate(columns=columns)
                     template_message = TemplateSendMessage(
                         alt_text='展覽資訊',
@@ -200,7 +200,7 @@ def handle_message(event):
                 quick_reply=QuickReply(
                     items=[
                         QuickReplyButton(
-                            action=MessageAction(label='台中', text='展覽資訊_台中'),
+                            action=MessageAction(label='臺中', text='展覽資訊_臺中'),
                             image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png'
                         ),
                         QuickReplyButton(
@@ -226,7 +226,7 @@ def handle_message(event):
                 quick_reply=QuickReply(
                     items=[
                         QuickReplyButton(
-                            action=MessageAction(label='台北', text='展覽資訊_台北'),
+                            action=MessageAction('label=臺北', text='展覽資訊_臺北'),
                             image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png'
                         ),
                         QuickReplyButton(
@@ -260,7 +260,7 @@ def handle_message(event):
                 quick_reply=QuickReply(
                     items=[
                         QuickReplyButton(
-                            action=MessageAction(label='台東', text='展覽資訊_台東'),
+                            action=MessageAction(label='臺東', text='展覽資訊_臺東'),
                             image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png'
                         ),
                         QuickReplyButton(
@@ -282,7 +282,7 @@ def handle_message(event):
                             image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png'
                         ),
                         QuickReplyButton(
-                            action=MessageAction(label='台南', text='展覽資訊_台南'),
+                            action=MessageAction(label='臺南', text='展覽資訊_臺南'),
                             image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png'
                         ),
                         QuickReplyButton(
