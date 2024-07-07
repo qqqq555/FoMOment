@@ -62,4 +62,7 @@ SITCON Hackathon 2024
 其實我們是第一次認真寫python的小菜雞
 
 ### 成果展示
+<img width="787" alt="Screenshot 2024-07-07 at 1 59 59 PM" src="https://github.com/qqqq555/FoMOment/assets/126385793/f740b137-73ea-4040-a108-109e939e35a6">
+
+https://www.canva.com/design/DAGKOw0q8lA/owTurITTHdxHNPGVN6Z3Ww/view?utm_content=DAGKOw0q8lA&utm_campaign=designshare&utm_medium=link&utm_source=editor
 
