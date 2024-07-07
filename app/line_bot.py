@@ -12,7 +12,7 @@ from app.firebase import (
 )
 from app.gemini import summarize_with_gemini, talk_to_gemini
 from app.config import Config
-from app.exhibition import get_exhibition_data, filter_exhibitions, format_exhibition_info
+from app.exhibition import get_exhibition_data, filter_exhibitions
 from app.stock import get_stock_info
 from app.fortune import get_daily_fortune, create_fortune_flex_message
 from app.news import get_news_carousel
