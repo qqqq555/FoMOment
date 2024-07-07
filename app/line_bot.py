@@ -410,7 +410,7 @@ def handle_message(event):
                         column = CarouselColumn(
                             thumbnail_image_url='https://storage.googleapis.com/sitconimg/img/iconmonstr-location-2-240.png',   
                             title=exhibition['title'][:35],
-                            text=f"開始日期：{exhibition['startDate']}\n結束日期：{exhibition['endDate']}\n地點:{exhibition['showInfo'][0]['locationName']}",
+                            text=f"日期：{exhibition['startDate']}~{exhibition['endDate']}\n地點:{exhibition['showInfo'][0]['locationName'][:20]}",
                         )
                         columns.append(column)
                     carousel_template = CarouselTemplate(columns=columns)
@@ -438,7 +438,7 @@ def handle_message(event):
             if exhibitions:
                 filtered_exhibitions = filter_exhibitions(exhibitions, city)
                 if filtered_exhibitions:
-                    messages = [TextSendMessage(text=exhibition['startDate']) for exhibition in filtered_exhibitions]
+                    messages = [TextSendMessage(text=exhibition['endDate']) for exhibition in filtered_exhibitions]
                     line_bot_api.reply_message(event.reply_token, messages)
                 else:
                     response = f"抱歉，目前沒有找到{city}的展覽資訊。請確保城市名稱正確，例如：臺北、臺中、高雄等。"
