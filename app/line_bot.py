@@ -414,7 +414,7 @@ def handle_message(event):
                             actions=[
                                 URIAction(
                                     label='查看詳情',
-                                    uri=exhibition['sourceWebPromote']
+                                    uri='https://www.google.com'
                                 )
                             ]
                         )
@@ -445,6 +445,27 @@ def handle_message(event):
                 filtered_exhibitions = filter_exhibitions(exhibitions, city)
                 if filtered_exhibitions:
                     messages = [TextSendMessage(text=exhibition['startDate']) for exhibition in filtered_exhibitions]
+                    line_bot_api.reply_message(event.reply_token, messages)
+                else:
+                    response = f"抱歉，目前沒有找到{city}的展覽資訊。請確保城市名稱正確，例如：臺北、臺中、高雄等。"
+                    line_bot_api.reply_message(
+                        event.reply_token,
+                        TextSendMessage(text=response)
+                    )
+            else:
+                response = "抱歉，目前無法獲取展覽資訊。"
+                line_bot_api.reply_message(
+                    event.reply_token,
+                    TextSendMessage(text=response)
+                )
+            return
+        elif user_message == '拜託啦啦啦':
+            city = '臺北'  # 根據需求設置城市
+            exhibitions = get_exhibition_data()
+            if exhibitions:
+                filtered_exhibitions = filter_exhibitions(exhibitions, city)
+                if filtered_exhibitions:
+                    messages = [TextSendMessage(text=exhibition['showInfo'][0]['locationName']) for exhibition in filtered_exhibitions]
                     line_bot_api.reply_message(event.reply_token, messages)
                 else:
                     response = f"抱歉，目前沒有找到{city}的展覽資訊。請確保城市名稱正確，例如：臺北、臺中、高雄等。"
